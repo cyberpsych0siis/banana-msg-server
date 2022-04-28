@@ -1,0 +1,21 @@
+{
+  "name": "banana-msg",
+  "version": "0.0.1",
+  "description": "Backend for banana messenger",
+  "main": "src/app.js",
+  "author": "cyberpsych0siis",
+  "license": "BSD",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "nodemon .",
+    "prod": "node ."
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "ioredis": "^5.0.4",
+    "mysql2": "^2.3.3",
+    "nodemon": "^2.0.15",
+    "uuid": "^8.3.2"
+  }
+}
