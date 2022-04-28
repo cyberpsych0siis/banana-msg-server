@@ -28,5 +28,5 @@ jobs:
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
-        key: ${{ SSH_PRIVATEKEY_PUB }}
+        key: ${{ secrets.SSH_PRIVATEKEY_PUB }}
         script: docker-compose up --build
