@@ -21,9 +21,13 @@ app.get("/my/msg", (req, res) => {
 })
 
 app.get("/my/contacts", (req, res) => {
-    const contact = new Contact();
+    const contact = {};
     console.log(contact);
     res.send(JSON.stringify([contact]));
+})
+
+app.get("/my/inbox", (req, res) => {
+    
 })
 
 app.listen(8080, () => {
