@@ -4,9 +4,8 @@ import SuccessMessage from "./success/SuccessMessage.js";
 
 export default (app) =>  {
     const api = express.Router();
-    app.use(express.json());
 
-    api.post("/send", (req, res) => {
+    api.post("/send", express.json(), (req, res) => {
         const { message, from, to } = req.body;
         
         const msg = new BananaMessage(message, from, to);
@@ -19,15 +18,15 @@ export default (app) =>  {
         res.send("Only authenticated clients get to see this. Congratulations!");
     });
 
-    api.get("/contacts", (req, res) => {
-        console.log(req.headers);
-        console.log(req.session);
+    api.get("/contacts", express.json(), (req, res) => {
+//        console.log(req.headers);
+//        console.log(req.session);
         const contact = {};
         console.log(contact);
         res.send(JSON.stringify([contact]));
     })
 
-    api.get("/inbox", (req, res) => {
+    api.get("/inbox", express.json(), (req, res) => {
 
     })
 
