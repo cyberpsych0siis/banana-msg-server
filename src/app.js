@@ -5,7 +5,8 @@ import session from 'header-session';
 import MyRoute from "./MyRoute.js";
 const app = express();
 
-app.use(session())
+//app.use(session())
+app.use(session);
 
 MyRoute(app);
 

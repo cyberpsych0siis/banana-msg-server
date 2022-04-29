@@ -1,4 +1,5 @@
 import express from "express";
+import Contact from "./model/Contact.js";
 import BananaMessage from "./model/Message.js";
 import SuccessMessage from "./success/SuccessMessage.js";
 
@@ -21,7 +22,7 @@ export default (app) =>  {
     api.get("/contacts", (req, res) => {
 //        console.log(req.headers);
 //        console.log(req.session);
-        const contact = {};
+        const contact = new Contact();
         console.log(contact);
         res.send(JSON.stringify([contact]));
     })
