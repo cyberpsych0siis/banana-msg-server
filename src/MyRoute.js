@@ -18,7 +18,7 @@ export default (app) =>  {
         res.send("Only authenticated clients get to see this. Congratulations!");
     });
 
-    api.get("/contacts", express.json(), (req, res) => {
+    api.get("/contacts", (req, res) => {
 //        console.log(req.headers);
 //        console.log(req.session);
         const contact = {};
