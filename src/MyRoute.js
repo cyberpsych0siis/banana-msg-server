@@ -17,7 +17,7 @@ export default (app) =>  {
     api.get("/msg", (req, res) => {
         console.log(req.headers);
         res.send("Only authenticated clients get to see this. Congratulations!");
-    })
+    });
 
     api.get("/contacts", (req, res) => {
         console.log(req.headers);
