@@ -1,0 +1,13 @@
+services:
+  backend:
+    container_name: backend
+    build: https://github.com/cyberpsych0siis/banana-msg-server.git#main
+    volumes:
+      - certs:/certs
+    networks:
+      - frontend
+      - redis
+
+networks:
+  banana:
+    external: true
