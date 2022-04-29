@@ -24,6 +24,7 @@ app.get("/my/msg", (req, res) => {
 })
 
 app.get("/my/contacts", (req, res) => {
+    console.log(req.headers);
     console.log(req.session);
     const contact = {};
     console.log(contact);
