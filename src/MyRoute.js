@@ -26,18 +26,12 @@ export default (app) =>  {
 
         sql.query(
             `SELECT friend2.publicKey as publicKey, friend2.username as username
-
             FROM usercontacts
-            
             JOIN userKeys as friend1
-            
-            ON userKeys.subject = usercontacts.user1
-            
+            ON friend1.subject = usercontacts.user1
             JOIN userKeys as friend2
-            
-            ON userKeys.subject = usercontacts.user2
-            
-            WHERE usercontacts.fetched = 0 AND friend1.username = ?`,
+            ON friend2.subject = usercontacts.user2
+            WHERE usercontacts.fetched = 0 AND friend1.username = '?'`,
             [req.auth.sub],
             function(err, results) {
                 if (err) {
@@ -46,7 +40,7 @@ export default (app) =>  {
                 }
 
                 console.log(results);
-                
+
                 res.status(200).send(results.map((v) => {
                     return new Contact(v.username, v.publicKey);
                 })).end();
