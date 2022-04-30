@@ -8,7 +8,7 @@ export default (app) =>  {
 
     api.post("/send", express.json(), (req, res) => {
         const { message, from, to } = req.body;
-        
+
         const msg = new BananaMessage(message, from, to);
         console.log(msg);
         const success = new SuccessMessage(req, res, msg);
