@@ -3,8 +3,6 @@ import express from "express";
 import { expressjwt } from 'express-jwt';
 import jwks from 'jwks-rsa';
 import MyRoute from "./MyRoute.js";
-//import dotenv from 'dotenv';
-//dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8080;

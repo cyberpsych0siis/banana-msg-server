@@ -14,19 +14,12 @@ export default (app) =>  {
         const success = new SuccessMessage(req, res, msg);
     });
 
-    api.get("/msg", (req, res) => {
-        console.log(req.headers);
-        res.send("Only authenticated clients get to see this. Congratulations!");
-    });
-
     api.get("/contacts", (req, res) => {
-//        console.log(req.headers);
-//        console.log(req.session);
         console.log(req.auth);
         const contact = new Contact();
         console.log(contact);
         res.send(JSON.stringify([contact])).end();
-    })
+    });
 
     api.get("/inbox", express.json(), (req, res) => {
 
