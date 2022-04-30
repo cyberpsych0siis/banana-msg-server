@@ -15,7 +15,7 @@ export default (app) =>  {
     });
 
     api.get("/contacts", (req, res) => {
-        console.log(req.auth);
+        console.log("Contacts for subject", req.auth.sub);
         const contact = new Contact();
         console.log(contact);
         res.send(JSON.stringify([contact])).end();
