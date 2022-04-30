@@ -31,7 +31,7 @@ export default (app) =>  {
             ON friend1.subject = usercontacts.user1
             JOIN userKeys as friend2
             ON friend2.subject = usercontacts.user2
-            WHERE usercontacts.fetched = 0 AND friend1.username = '?'`,
+            WHERE usercontacts.fetched = 0 AND friend1.subject = '?'`,
             [req.auth.sub],
             function(err, results) {
                 if (err) {
