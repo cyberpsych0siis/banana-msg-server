@@ -50,7 +50,7 @@ export default (app) =>  {
 
     app.post("/register_device", (req, res) => {
         console.log(req.body);
-        res.status(200);
+        res.status(200).end();
     });
 
     app.use("/", api);
