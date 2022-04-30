@@ -44,7 +44,7 @@ export default (app) =>  {
 
         res.send({
             "errorcode": 1,
-            "errormessage": "No Keys for account " + req.auth.sub
+            "errordescription": "No Keys for account " + req.auth.sub
         });
     });
 
