@@ -23,7 +23,14 @@ export default (app) =>  {
 
     api.get("/inbox", express.json(), (req, res) => {
 
-    })
+    });
+
+    app.get("/keys", (req, res) => {
+        res.send({
+            "public": "public key here",
+            "private": "private key goes here"
+        });
+    });
 
     app.use("/", api);
 }

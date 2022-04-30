@@ -12,6 +12,7 @@
     "prod": "node ."
   },
   "dependencies": {
+    "dotenv": "^16.0.0",
     "express": "^4.18.0",
     "express-jwt": "^7.5.2",
     "header-session": "https://github.com/cyberpsych0siis/header-session.git",
