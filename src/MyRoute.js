@@ -27,8 +27,8 @@ export default (app) =>  {
 
     app.get("/keys", (req, res) => {
         res.send({
-            "public": "public key here",
-            "private": "private key goes here"
+            "publicKey": "public key here",
+            "privateKey": "private key goes here"
         });
     });
 
