@@ -22,6 +22,7 @@ export default (app) =>  {
     api.get("/contacts", (req, res) => {
 //        console.log(req.headers);
 //        console.log(req.session);
+        console.log(req.auth);
         const contact = new Contact();
         console.log(contact);
         res.send(JSON.stringify([contact])).end();
