@@ -49,7 +49,7 @@ export default (app) =>  {
     });
 
     app.post("/register_device", (req, res) => {
-        console.log(req.body);
+        console.log(req.body, req.auth.sub);
         res.status(200).end();
     });
 
