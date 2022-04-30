@@ -23,34 +23,62 @@ export default (app) =>  {
     });
 
     api.get("/contacts", (req, res) => {
-        console.log("Contacts for subject", req.auth.sub);
-        const contact = new Contact();
-        console.log(contact);
-        res.send(JSON.stringify([contact])).end();
+
+        connection.query(
+            `SELECT friend2.publicKey as publicKey, friend2.username as username
+
+            FROM usercontacts
+            
+            JOIN userKeys as friend1
+            
+            ON userKeys.subject = usercontacts.user1
+            
+            JOIN userKeys as friend2
+            
+            ON userKeys.subject = usercontacts.user2
+            
+            WHERE usercontacts.fetched = 0 AND friend1.username = ?`,
+            [req.auth.sub],
+            function(err, results) {
+                if (err) {
+                    console.error(err)
+                    res.status(401).end();
+                }
+                res.status(200).send(results.map((v) => {
+                    return new Contact(v.username, v.publicKey);
+                })).end();
+
+                connection.query(
+                    `UPDATE usercontacts SET fetched = 1 WHERE user1 = ?`,
+                    [req.auth.sub],
+                    function(err, results) {
+                        if (err) {
+                            console.error(err);
+                        }
+                    }
+                )
+            }
+        )
     });
 
     api.get("/inbox", (req, res) => {
 
     });
 
-    app.get("/keys", (req, res) => {
-        //first check if keys exist
-        //if they dont exist, generate some, store them and return them
-        //if they exist simply skip generation and storing
-/*        res.send({
-            "publicKey": "public key here",
-            "privateKey": "private key goes here"
-        });*/
+    api.post("/register_device", (req, res) => {
+        console.log(req.body.username, req.auth.sub);
 
-        res.send({
-            "errorcode": 1,
-            "errordescription": "No Keys for account " + req.auth.sub
-        });
-    });
-
-    app.post("/register_device", (req, res) => {
-        console.log(req.body, req.auth.sub);
-        res.status(200).end();
+        connection.query(
+            "INSERT INTO `userKeys`(`subject`, `username`, `publicKey`) VALUES ('?','?','?')",
+            [req.auth.sub, req.body.username, req.body.privateKey],
+            function(err, results) {
+                if (err) {
+                    res.status(401).end();
+                }
+                console.log(results);
+                res.status(200).end();
+            }
+          );
     });
 
     app.use("/", api);
