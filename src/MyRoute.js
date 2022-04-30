@@ -24,12 +24,12 @@ export default (app) =>  {
 //        console.log(req.session);
         const contact = new Contact();
         console.log(contact);
-        res.send(JSON.stringify([contact]));
+        res.send(JSON.stringify([contact])).end();
     })
 
     api.get("/inbox", express.json(), (req, res) => {
 
     })
 
-    app.use("/my", api);
+    app.use("/", api);
 }
