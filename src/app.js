@@ -7,7 +7,9 @@ import MyRoute from "./MyRoute.js";
 const app = express();
 const port = process.env.PORT || 8080;
 
-if (process.env.NODE_ENV == "prod") {
+console.log(process.env);
+
+//if (process.env.NODE_ENV == "prod") {
     const jwtCheck = expressjwt({
           secret: jwks.expressJwtSecret({
               cache: true,
@@ -21,7 +23,7 @@ if (process.env.NODE_ENV == "prod") {
     });
 
     app.use(jwtCheck);
-}
+//}
 
 MyRoute(app);
 
