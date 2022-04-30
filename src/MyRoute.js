@@ -44,6 +44,9 @@ export default (app) =>  {
                     console.error(err)
                     res.status(401).end();
                 }
+
+                console.log(results);
+                
                 res.status(200).send(results.map((v) => {
                     return new Contact(v.username, v.publicKey);
                 })).end();
