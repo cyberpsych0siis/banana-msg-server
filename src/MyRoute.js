@@ -24,7 +24,7 @@ export default (app) =>  {
 
     api.get("/contacts", (req, res) => {
 
-        connection.query(
+        sql.query(
             `SELECT friend2.publicKey as publicKey, friend2.username as username
 
             FROM usercontacts
@@ -48,7 +48,7 @@ export default (app) =>  {
                     return new Contact(v.username, v.publicKey);
                 })).end();
 
-                connection.query(
+                sql.query(
                     `UPDATE usercontacts SET fetched = 1 WHERE user1 = ?`,
                     [req.auth.sub],
                     function(err, results) {
@@ -68,7 +68,7 @@ export default (app) =>  {
     api.post("/register_device", (req, res) => {
         console.log(req.body.username, req.auth.sub);
 
-        connection.query(
+        sql.query(
             "INSERT INTO `userKeys`(`subject`, `username`, `publicKey`) VALUES ('?','?','?')",
             [req.auth.sub, req.body.username, req.body.privateKey],
             function(err, results) {
