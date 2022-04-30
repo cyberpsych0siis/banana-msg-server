@@ -22,6 +22,8 @@ const jwtCheck = expressjwt({
     algorithms: ['RS256']
 });
 
+app.use(express.json())
+
 app.use(jwtCheck);
 
 MyRoute(app);

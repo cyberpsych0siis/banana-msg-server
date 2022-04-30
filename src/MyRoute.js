@@ -14,7 +14,7 @@ export default (app) =>  {
         database: process.env.MYSQL_DATABASE ?? "banana-msg"
     });
 
-    api.post("/send", express.json(), (req, res) => {
+    api.post("/send", (req, res) => {
         const { message, from, to } = req.body;
 
         const msg = new BananaMessage(message, from, to);
@@ -29,15 +29,28 @@ export default (app) =>  {
         res.send(JSON.stringify([contact])).end();
     });
 
-    api.get("/inbox", express.json(), (req, res) => {
+    api.get("/inbox", (req, res) => {
 
     });
 
     app.get("/keys", (req, res) => {
-        res.send({
+        //first check if keys exist
+        //if they dont exist, generate some, store them and return them
+        //if they exist simply skip generation and storing
+/*        res.send({
             "publicKey": "public key here",
             "privateKey": "private key goes here"
+        });*/
+
+        res.send({
+            "errorcode": 1,
+            "errormessage": "No Keys for account " + req.auth.sub
         });
+    });
+
+    app.post("/register_device", (req, res) => {
+        console.log(req.body);
+        res.status(200);
     });
 
     app.use("/", api);
