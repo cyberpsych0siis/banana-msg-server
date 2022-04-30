@@ -2,9 +2,17 @@ import express from "express";
 import Contact from "./model/Contact.js";
 import BananaMessage from "./model/Message.js";
 import SuccessMessage from "./success/SuccessMessage.js";
+import mysql from 'mysql2';
 
 export default (app) =>  {
     const api = express.Router();
+
+    const sql = mysql.createConnection({
+        host: process.env.MYSQL_HOST ?? "localhost",
+        user: process.env.MYSQL_USER ?? "root",
+        password: process.env.MYSQL_PASSWORD ?? "",
+        database: process.env.MYSQL_DATABASE ?? "banana-msg"
+    });
 
     api.post("/send", express.json(), (req, res) => {
         const { message, from, to } = req.body;
