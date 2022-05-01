@@ -3,6 +3,7 @@ import Contact from "./model/Contact.js";
 import BananaMessage from "./model/Message.js";
 import SuccessMessage from "./success/SuccessMessage.js";
 import mysql from 'mysql2';
+import webfinger from 'webfinger';
 
 export default (app) => {
     const api = express.Router();
@@ -13,6 +14,8 @@ export default (app) => {
         password: process.env.MYSQL_PASS ?? "",
         database: process.env.MYSQL_DATABASE ?? "banana-msg"
     });
+
+    webfinger(app, sql);
 
     api.post("/send", (req, res) => {
         const { message, from, to } = req.body;
