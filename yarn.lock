@@ -1493,7 +1493,7 @@ vary@~1.1.2:
 
 "webfinger@https://github.com/cyberpsych0siis/WebFinger.js.git":
   version "1.0.0"
-  resolved "https://github.com/cyberpsych0siis/WebFinger.js.git#36a7f545f635eb38748f547ebb3b5603ce0a508b"
+  resolved "https://github.com/cyberpsych0siis/WebFinger.js.git#27bb083930faf5e4da6c99c0f0416a4ff08169fe"
   dependencies:
     dotenv "^16.0.0"
     mysql2 "^2.3.3"
