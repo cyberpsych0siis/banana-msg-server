@@ -1,14 +1,3 @@
-import mysql from 'mysql2';
-
-export class DebugTester {
-    static query(q, data = []) {
-        return new Promise((res, rej) => {
-            console.log(query);
-            res(query);
-        });
-    }
-}
-
 export default class SqlSingleton {
     static setSql(sql) {
         this.sql = sql;
@@ -16,7 +5,7 @@ export default class SqlSingleton {
 
     static query(q, data = []) {
         return new Promise((res, rej) => {
-            SqlSingleton.sql.query(q, data, (err, dbData) => {
+            SqlSingleton.sql.runQuery(q, data, (err, dbData) => {
                 if (err) { 
                     rej(err.message);
                     return;

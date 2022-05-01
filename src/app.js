@@ -1,4 +1,4 @@
-
+import fs from 'fs';
 import express from "express";
 import { expressjwt } from 'express-jwt';
 import jwks from 'jwks-rsa';
@@ -37,6 +37,17 @@ if (process.env.NODE_ENV == "dev") {
     webfinger(app, new MySQLDatabaseConnector());
 }
 
-app.listen(port, () => {
-    console.log("listening on port " + port);
-});
+if (process.env.USE_SSL == "true") {
+    var privateKey = fs.readFileSync(process.env.SSL_KEY_FILE ?? 'ssl/key.pem' );
+    var certificate = fs.readFileSync(process.env.SSL_CERT_FILE ?? 'ssl/cert.pem' );
+
+    https.createServer({
+        key: privateKey,
+        cert: certificate
+    }, app).listen(port);
+    console.log("listening on port " + port + " (SSL Enabled)");
+} else {   
+    app.listen(port, () => {
+        console.log("listening on port " + port);
+    });
+}
