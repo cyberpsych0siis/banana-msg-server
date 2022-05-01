@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node .",
-    "standalone": "nodemon src/standalone.js",
+    "standalone": "node .",
     "dev": "nodemon ."
   },
   "devDependencies": {

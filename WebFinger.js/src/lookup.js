@@ -13,7 +13,7 @@ export const lookupIdentifier = async function (identifier) {
     const { protocol, href, auth, hostname } = identifier;
     if (protocol === "acct:" && (useStrictDomainChecking() || hostname === getDomain())) {
         //search for auth in database
-        console.log("Searching for Username " + auth + " on " + process.auth.sub)
+        console.log("Searching for Username " + auth + " on " + process.env.JWT_AUDIENCE)
         const userdata = await searchForUserdata(auth);
         console.log(userdata);
 
