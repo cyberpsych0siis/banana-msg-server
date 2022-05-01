@@ -68,8 +68,8 @@ export default (app) => {
                 console.log(results);
 
                 sql.query(
-                    'INSERT INTO usercontacts(user1, user2) VALUES (?,(SELECT userKeys.subject FROM userKeys WHERE userKeys.publicKey = ?))',
-                    [req.auth.sub, req.body.foreignKey],
+                    'INSERT INTO usercontacts(user1, user2) VALUES (?, ?)',
+                    [req.auth.sub, results[0].subject],
                     function (err, results) {
                         if (err) {
                             console.error(err);
