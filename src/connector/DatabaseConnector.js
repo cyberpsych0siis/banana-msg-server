@@ -25,7 +25,7 @@ export class SQliteDatabaseConnector extends DatabaseConnector {
     (async () => {
     // open the database
       const db = await open({
-        filename: '/tmp/database.db',
+        filename: '/app/database.db',
         driver: sqlite3.Database
       });
 
