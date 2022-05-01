@@ -51,7 +51,7 @@ export default (app) => {
 
     app.post("/friend_request", (req, res) => {
         sql.query(
-            'SELECT `username` FROM `userKeys` WHERE `publicKey` = ?',
+            'SELECT `username`, `subject` FROM `userKeys` WHERE `publicKey` = ?',
             [req.body.friend_id],
             function (err, results) {
                 if (err) {
@@ -64,6 +64,9 @@ export default (app) => {
                     res.status(404).end();
                     return;
                 }
+
+                console.log(results);
+
                 sql.query(
                     'INSERT INTO usercontacts(user1, user2) VALUES (?,(SELECT userKeys.subject FROM userKeys WHERE userKeys.publicKey = ?))',
                     [req.auth.sub, req.body.foreignKey],
