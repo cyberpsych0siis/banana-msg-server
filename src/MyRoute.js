@@ -110,11 +110,11 @@ export default (app) => {
     });
 
     api.post("/register_device", (req, res) => {
-        console.log(req.body.username, req.auth.sub);
+        console.log(req.body);
 
         sql.query(
-            "INSERT INTO `userKeys`(`subject`, `username`, `publicKey`) VALUES ('?','?','?')",
-            [req.auth.sub, req.body.username, req.body.privateKey],
+            "INSERT INTO `userKeys`(`subject`, `username`, `publicKey`) VALUES (?,?,?)",
+            [req.auth.sub, req.body.username, req.body.publicKey],
             function (err, results) {
                 if (err) {
                     console.error(err);
