@@ -60,7 +60,32 @@ export default (app) =>  {
                     return
                 }
 
-                res.status(200).end();
+                console.log(results);
+/*                struct ServerContact: ServerMessage {
+                    var name: String
+                    var publicKey: String
+                    var status: Int
+                }*/
+                sql.query(
+                    'SELECT `username` FROM `userKeys` WHERE `publicKey` = ?',
+                    [req.body.friend_id],
+                    function(err, results) {
+                        if (err) {
+                            console.error(err);
+                            res.status(401).end();
+                            return;
+                        }
+
+                        if (results.length == 0) {
+                            res.status(404).end();
+                            return;
+                        }
+
+                        res.status(200).send({
+                            "name": results[0].username,
+                            "publicKey": req.body.friend_id
+                        });
+                    })
             }
         )
     })
