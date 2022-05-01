@@ -2,16 +2,9 @@ import express from "express";
 import Contact from "./model/Contact.js";
 import BananaMessage from "./model/Message.js";
 import SuccessMessage from "./success/SuccessMessage.js";
-import mysql from 'mysql2';
-
-export const sqlConnection = mysql.createConnection({
-    host: process.env.MYSQL_HOST ?? "localhost",
-    user: process.env.MYSQL_USER ?? "root",
-    password: process.env.MYSQL_PASS ?? "",
-    database: process.env.MYSQL_DATABASE ?? "banana-msg"
-});
 
 export default (app) => {
+
     const api = express.Router();
 
     api.post("/send", (req, res) => {
@@ -126,5 +119,5 @@ export default (app) => {
         );
     });
 
-    app.use("/", api);
+    app.use("/api/v1", api);
 }

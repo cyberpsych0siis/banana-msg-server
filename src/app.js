@@ -2,9 +2,10 @@
 import express from "express";
 import { expressjwt } from 'express-jwt';
 import jwks from 'jwks-rsa';
-import MyRoute, { sqlConnection } from "./MyRoute.js";
+import MyRoute from "./MyRoute.js";
 import webfinger from 'webfinger';
 import dotenv from 'dotenv';
+import MySQLDatabaseConnector, { SQliteDatabaseConnector } from "./connector/DatabaseConnector.js";
 
 dotenv.config();
 
@@ -29,8 +30,13 @@ app.use(jwtCheck);
 
 MyRoute(app);
 
-webfinger(app, sqlConnection);
+console.log(process.env.NODE_ENV);
+if (process.env.NODE_ENV == "dev") {
+    webfinger(app, new SQliteDatabaseConnector())
+} else {
+    webfinger(app, new MySQLDatabaseConnector());
+}
 
 app.listen(port, () => {
     console.log("listening on port " + port);
-})
+});
