@@ -1534,6 +1534,13 @@ vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
+"webfinger@https://github.com/cyberpsych0siis/WebFinger.js.git":
+  version "1.0.0"
+  resolved "https://github.com/cyberpsych0siis/WebFinger.js.git#857a9c6fc45ed59ee402950df4ba32a5b41ec93a"
+  dependencies:
+    dotenv "^16.0.0"
+    mysql2 "^2.3.3"
+
 widest-line@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/widest-line/-/widest-line-3.1.0.tgz#8292333bbf66cb45ff0de1603b136b7ae1496eca"

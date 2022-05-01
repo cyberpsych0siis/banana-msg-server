@@ -20,6 +20,7 @@
     "jwks-rsa": "^2.1.0",
     "mysql2": "^2.3.3",
     "nodemon": "^2.0.15",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "webfinger": "https://github.com/cyberpsych0siis/WebFinger.js.git"
   }
 }
