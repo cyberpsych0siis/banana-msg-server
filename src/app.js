@@ -2,7 +2,8 @@
 import express from "express";
 import { expressjwt } from 'express-jwt';
 import jwks from 'jwks-rsa';
-import MyRoute from "./MyRoute.js";
+import MyRoute, { sqlConnection } from "./MyRoute.js";
+import webfinger from 'webfinger';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -27,6 +28,8 @@ app.use(express.json())
 app.use(jwtCheck);
 
 MyRoute(app);
+
+webfinger(app, sqlConnection);
 
 app.listen(port, () => {
     console.log("listening on port " + port);

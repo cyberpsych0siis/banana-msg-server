@@ -3,19 +3,16 @@ import Contact from "./model/Contact.js";
 import BananaMessage from "./model/Message.js";
 import SuccessMessage from "./success/SuccessMessage.js";
 import mysql from 'mysql2';
-import webfinger from 'webfinger';
+
+export const sqlConnection = mysql.createConnection({
+    host: process.env.MYSQL_HOST ?? "localhost",
+    user: process.env.MYSQL_USER ?? "root",
+    password: process.env.MYSQL_PASS ?? "",
+    database: process.env.MYSQL_DATABASE ?? "banana-msg"
+});
 
 export default (app) => {
     const api = express.Router();
-
-    const sql = mysql.createConnection({
-        host: process.env.MYSQL_HOST ?? "localhost",
-        user: process.env.MYSQL_USER ?? "root",
-        password: process.env.MYSQL_PASS ?? "",
-        database: process.env.MYSQL_DATABASE ?? "banana-msg"
-    });
-
-    webfinger(app, sql);
 
     api.post("/send", (req, res) => {
         const { message, from, to } = req.body;
