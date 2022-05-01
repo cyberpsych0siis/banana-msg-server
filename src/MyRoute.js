@@ -37,6 +37,7 @@ export default (app) =>  {
                 if (err) {
                     console.error(err)
                     res.status(401).end();
+                    return;
                 }
 
                 console.log(results);
@@ -44,19 +45,41 @@ export default (app) =>  {
                 res.status(200).send(results.map((v) => {
                     return new Contact(v.username, v.publicKey);
                 })).end();
-
-                sql.query(
-                    `UPDATE usercontacts SET fetched = 1 WHERE user1 = ?`,
-                    [req.auth.sub],
-                    function(err, results) {
-                        if (err) {
-                            console.error(err);
-                        }
-                    }
-                )
             }
         )
     });
+
+    app.post("/friend_request", (req, res) => {
+        sql.query(
+            'INSERT INTO usercontacts(user1, user2) VALUES (?,(SELECT userKeys.subject FROM userkeys WHERE userKeys.publicKey = ?))',
+            [req.auth.sub, req.body.friend_id],
+            function(err, results) {
+                if (err) {
+                    console.error(err);
+                    res.status(401).end();
+                    return
+                }
+
+                res.status(200).end();
+            }
+        )
+    })
+
+    app.post("/friend_accept", (req, res) => {
+        sql.query(
+            `UPDATE usercontacts SET fetched = 1 WHERE user1 = ? AND user2 = ?`,
+            [req.auth.sub, req.body.friend_id],
+            function(err, results) {
+                if (err) {
+                    console.error(err);
+                    res.status(401);
+                    return
+                }
+
+                res.status(200).end();
+            }
+        )
+    })
 
     api.get("/inbox", (req, res) => {
 
