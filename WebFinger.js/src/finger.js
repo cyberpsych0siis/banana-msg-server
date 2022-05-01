@@ -75,7 +75,7 @@ export const webfingerListener = function (req, res) {
     }
 }
 
-export default (app, mysql = null) => {
-    if (!mysql) sql.setSql(sql);
+export default (app, mysql) => {
+    sql.setSql(mysql);
     app.get("/.well-known/webfinger", webfingerListener);
 }
