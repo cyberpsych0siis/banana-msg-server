@@ -51,7 +51,7 @@ export default (app) =>  {
 
     app.post("/friend_request", (req, res) => {
         sql.query(
-            'INSERT INTO usercontacts(user1, user2) VALUES (?,(SELECT userKeys.subject FROM userkeys WHERE userKeys.publicKey = ?))',
+            'INSERT INTO usercontacts(user1, user2) VALUES (?,(SELECT userKeys.subject FROM userKeys WHERE userKeys.publicKey = ?))',
             [req.auth.sub, req.body.foreignKey],
             function(err, results) {
                 if (err) {
