@@ -117,6 +117,7 @@ export default (app) => {
             [req.auth.sub, req.body.username, req.body.privateKey],
             function (err, results) {
                 if (err) {
+                    console.error(err);
                     res.status(401).end();
                 }
                 console.log(results);
