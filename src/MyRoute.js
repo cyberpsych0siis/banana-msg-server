@@ -22,7 +22,7 @@ export default (app) =>  {
         const success = new SuccessMessage(req, res, msg);
     });
 
-    api.get("/contacts", (req, res) => {
+    api.get("/friend_request", (req, res) => {
 
         sql.query(
             `SELECT friend2.publicKey as publicKey, friend2.username as username
@@ -52,7 +52,7 @@ export default (app) =>  {
     app.post("/friend_request", (req, res) => {
         sql.query(
             'INSERT INTO usercontacts(user1, user2) VALUES (?,(SELECT userKeys.subject FROM userkeys WHERE userKeys.publicKey = ?))',
-            [req.auth.sub, req.body.friend_id],
+            [req.auth.sub, req.body.foreignKey],
             function(err, results) {
                 if (err) {
                     console.error(err);
@@ -83,7 +83,8 @@ export default (app) =>  {
 
                         res.status(200).send({
                             "name": results[0].username,
-                            "publicKey": req.body.friend_id
+                            "publicKey": req.body.foreignKey,
+                            "status": 1
                         });
                     })
             }
@@ -93,7 +94,7 @@ export default (app) =>  {
     app.post("/friend_accept", (req, res) => {
         sql.query(
             `UPDATE usercontacts SET fetched = 1 WHERE user1 = ? AND user2 = ?`,
-            [req.auth.sub, req.body.friend_id],
+            [req.auth.sub, req.body.foreignKey],
             function(err, results) {
                 if (err) {
                     console.error(err);
