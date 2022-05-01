@@ -4,7 +4,7 @@ import BananaMessage from "./model/Message.js";
 import SuccessMessage from "./success/SuccessMessage.js";
 import mysql from 'mysql2';
 
-export default (app) =>  {
+export default (app) => {
     const api = express.Router();
 
     const sql = mysql.createConnection({
@@ -33,7 +33,7 @@ export default (app) =>  {
             ON friend2.subject = usercontacts.user2
             WHERE usercontacts.fetched = 0 AND friend1.subject = ?`,
             [req.auth.sub],
-            function(err, results) {
+            function (err, results) {
                 if (err) {
                     console.error(err)
                     res.status(401).end();
@@ -51,35 +51,30 @@ export default (app) =>  {
 
     app.post("/friend_request", (req, res) => {
         sql.query(
-            'INSERT INTO usercontacts(user1, user2) VALUES (?,(SELECT userKeys.subject FROM userKeys WHERE userKeys.publicKey = ?))',
-            [req.auth.sub, req.body.foreignKey],
-            function(err, results) {
+            'SELECT `username` FROM `userKeys` WHERE `publicKey` = ?',
+            [req.body.friend_id],
+            function (err, results) {
                 if (err) {
                     console.error(err);
                     res.status(401).end();
-                    return
+                    return;
                 }
 
-                console.log(results);
-/*                struct ServerContact: ServerMessage {
-                    var name: String
-                    var publicKey: String
-                    var status: Int
-                }*/
+                if (results.length == 0) {
+                    res.status(404).end();
+                    return;
+                }
                 sql.query(
-                    'SELECT `username` FROM `userKeys` WHERE `publicKey` = ?',
-                    [req.body.friend_id],
-                    function(err, results) {
+                    'INSERT INTO usercontacts(user1, user2) VALUES (?,(SELECT userKeys.subject FROM userKeys WHERE userKeys.publicKey = ?))',
+                    [req.auth.sub, req.body.foreignKey],
+                    function (err, results) {
                         if (err) {
                             console.error(err);
                             res.status(401).end();
-                            return;
+                            return
                         }
 
-                        if (results.length == 0) {
-                            res.status(404).end();
-                            return;
-                        }
+                        console.log(results);
 
                         res.status(200).send({
                             "name": results[0].username,
@@ -95,7 +90,7 @@ export default (app) =>  {
         sql.query(
             `UPDATE usercontacts SET fetched = 1 WHERE user1 = ? AND user2 = ?`,
             [req.auth.sub, req.body.foreignKey],
-            function(err, results) {
+            function (err, results) {
                 if (err) {
                     console.error(err);
                     res.status(401);
@@ -117,14 +112,14 @@ export default (app) =>  {
         sql.query(
             "INSERT INTO `userKeys`(`subject`, `username`, `publicKey`) VALUES ('?','?','?')",
             [req.auth.sub, req.body.username, req.body.privateKey],
-            function(err, results) {
+            function (err, results) {
                 if (err) {
                     res.status(401).end();
                 }
                 console.log(results);
                 res.status(200).end();
             }
-          );
+        );
     });
 
     app.use("/", api);
