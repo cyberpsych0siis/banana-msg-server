@@ -1,4 +1,5 @@
 import express from "express";
+import SqlSingleton from "webfinger/src/sql";
 import Contact from "./model/Contact.js";
 import BananaMessage from "./model/Message.js";
 import SuccessMessage from "./success/SuccessMessage.js";
@@ -15,6 +16,7 @@ export default (app) => {
         const success = new SuccessMessage(req, res, msg);
     });
 
+    //Doesn't work
     api.get("/friend_request", (req, res) => {
 
         sql.query(
@@ -42,7 +44,9 @@ export default (app) => {
         )
     });
 
-    app.post("/friend_request", (req, res) => {
+    //Doesnt work
+    api.post("/friend_request", async (req, res) => {
+        
         sql.query(
             'SELECT `username`, `subject` FROM `userKeys` WHERE `publicKey` = ?',
             [req.body.friend_id],
@@ -82,41 +86,36 @@ export default (app) => {
         )
     })
 
-    app.post("/friend_accept", (req, res) => {
-        sql.query(
-            `UPDATE usercontacts SET fetched = 1 WHERE user1 = ? AND user2 = ?`,
-            [req.auth.sub, req.body.foreignKey],
-            function (err, results) {
-                if (err) {
-                    console.error(err);
-                    res.status(401);
-                    return
-                }
+    api.post("/friend_accept", async (req, res) => {
+        let resp = 
+        await SqlSingleton.query(`UPDATE usercontacts SET fetched = 1 WHERE user1 = ? AND user2 = ?`,
+            [req.auth.sub, req.body.foreignKey]);
 
-                res.status(200).end();
-            }
-        )
+        if (resp) {
+            res.status(200).end();
+        } else {
+            res.status(401).end();
+        }
     })
 
     api.get("/inbox", (req, res) => {
 
     });
 
-    api.post("/register_device", (req, res) => {
+    api.post("/register_device", async (req, res) => {
         console.log(req.body);
 
-        sql.query(
+        let resp = await SqlSingleton.query(
             "INSERT INTO `userKeys`(`subject`, `username`, `publicKey`) VALUES (?,?,?)",
-            [req.auth.sub, req.body.username, req.body.publicKey],
-            function (err, results) {
-                if (err) {
-                    console.error(err);
-                    res.status(401).end();
-                }
-                console.log(results);
-                res.status(200).end();
-            }
-        );
+            [req.auth.sub, req.body.username, req.body.publicKey]);
+
+        if (resp) {
+            res.status(200).send(JSON.stringify({
+                "success": true
+            }));
+        } else {
+            res.status(401).end();
+        }
     });
 
     app.use("/api/v1", api);
