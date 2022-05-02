@@ -1,5 +1,5 @@
 import express from "express";
-import SqlSingleton from "webfinger/src/sql";
+import SqlSingleton from "webfinger/src/sql.js";
 import Contact from "./model/Contact.js";
 import BananaMessage from "./model/Message.js";
 import SuccessMessage from "./success/SuccessMessage.js";
@@ -46,7 +46,7 @@ export default (app) => {
 
     //Doesnt work
     api.post("/friend_request", async (req, res) => {
-        
+
         sql.query(
             'SELECT `username`, `subject` FROM `userKeys` WHERE `publicKey` = ?',
             [req.body.friend_id],
