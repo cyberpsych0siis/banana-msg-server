@@ -56,5 +56,5 @@ async function searchForUserdata(name) {
     //needed for keys
     //sql.query("SELECT `publicKey` FROM `userKeys` WHERE username = ?",
 
-    return await SqlSingleton.query("SELECT `username`, `publicKey` FROM `userKeys` WHERE username = ?", [name]);
+    return SqlSingleton.query("SELECT `username`, `publicKey` FROM `userKeys` WHERE username = ?", [name]);
 }
