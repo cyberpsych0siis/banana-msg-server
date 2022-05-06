@@ -1,14 +1,44 @@
 import express from "express";
-import SqlSingleton from "webfinger/src/sql.js";
+import webfinger from 'webfinger';
+import jwtconfig from './jwt/config.js'
+
+// import SqlSingleton from "webfinger/src/sql.js";
+import MySQLDatabaseConnector, { SQliteDatabaseConnector } from "./connector/DatabaseConnector.js";
 import Contact from "./model/Contact.js";
 import BananaMessage from "./model/Message.js";
 import SuccessMessage from "./success/SuccessMessage.js";
+import BaseError from "./model/Error.js";
+
+
 
 export default (app) => {
+    const prefix = process.env.PREFIX || "/";
+    const route = express.Router();
 
-    const api = express.Router();
+    //make webfinger external?
+    /* Init Webfinger here */
+    webfinger(app, new SQliteDatabaseConnector());
 
-    api.post("/send", (req, res) => {
+    /* Init JWT here */
+    // jwtconfig(route);
+    
+    if (process.env.NODE_ENV != "production") {
+
+        route.get("/crash", (req, res, next) => {
+            throw new BaseError("Hello");
+        });
+        
+        route.get("/nocrash", (req, res, next) => {
+            next({
+                "msg": "here for a crash free world"
+            });
+        })
+    }
+
+    app.use(prefix, route);
+}
+
+    /* api.post("/send", (req, res) => {
         const { message, from, to } = req.body;
 
         const msg = new BananaMessage(message, from, to);
@@ -84,7 +114,7 @@ export default (app) => {
                     })
             }
         )
-    })
+    });
 
     api.post("/friend_accept", async (req, res) => {
         let resp = 
@@ -100,23 +130,10 @@ export default (app) => {
 
     api.get("/inbox", (req, res) => {
 
-    });
+    });*/
 
-    api.post("/register_device", async (req, res) => {
-        console.log(req.body);
+    // api.post("/register_device", async (req, res) => {
 
-        let resp = await SqlSingleton.query(
-            "INSERT INTO `userKeys`(`subject`, `username`, `publicKey`) VALUES (?,?,?)",
-            [req.auth.sub, req.body.username, req.body.publicKey]);
 
-        if (resp) {
-            res.status(200).send(JSON.stringify({
-                "success": true
-            }));
-        } else {
-            res.status(401).end();
-        }
-    });
+    // app.use("/api/v1", api);
 
-    app.use("/api/v1", api);
-}

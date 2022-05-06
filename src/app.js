@@ -1,42 +1,51 @@
 import fs from 'fs';
 import express from "express";
-import { expressjwt } from 'express-jwt';
-import jwks from 'jwks-rsa';
-import MyRoute from "./MyRoute.js";
-import webfinger from 'webfinger';
+
+import MyRoute from "./root.js";
+// import webfinger from 'webfinger';
 import dotenv from 'dotenv';
-import MySQLDatabaseConnector, { SQliteDatabaseConnector } from "./connector/DatabaseConnector.js";
+
+// import devices from './devices/index.js';
+import morgan from 'morgan';
+import BaseError from './model/Error.js';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-const jwtCheck = expressjwt({
-    secret: jwks.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: process.env.JWKS_URI
-    }),
-//    audience: process.env.JWT_AUDIENCE,
-    issuer: process.env.JWT_ISSUER,
-    algorithms: ['RS256']
-});
-
 app.use(express.json())
+app.use(morgan('dev'));
 
-app.use(jwtCheck);
-
+/* Add Root Route here */
 MyRoute(app);
 
-console.log(process.env.NODE_ENV);
-if (process.env.NODE_ENV == "dev") {
-    webfinger(app, new SQliteDatabaseConnector())
-} else {
-    webfinger(app, new MySQLDatabaseConnector());
-}
+/* Errorhandler */
+app.use((response, req, res, next) => {
+    console.log("hmm");
 
+    let success = !(response instanceof BaseError)
+    let successData = null;
+    let errorData = null;
+
+    if (response instanceof BaseError) {
+        res.status(500);
+        errorData = response;
+        console.log(errorData);
+    } else {
+        // res.send(JSON.stringify(err))
+        res.status(200);
+        successData = response;
+    }
+
+    res.send(JSON.stringify({
+        success: success,
+        successData: successData,
+        errorData: errorData
+    }));
+});
+
+/* Let App Listen to port */
 if (process.env.USE_SSL == "true") {
     var privateKey = fs.readFileSync(process.env.SSL_KEY_FILE ?? 'ssl/key.pem' );
     var certificate = fs.readFileSync(process.env.SSL_CERT_FILE ?? 'ssl/cert.pem' );

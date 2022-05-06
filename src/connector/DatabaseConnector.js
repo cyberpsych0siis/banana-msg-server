@@ -1,5 +1,5 @@
 import sqlite3 from 'sqlite3'
-import { open } from 'sqlite'
+import { Database, open } from 'sqlite'
 import mysql from "mysql2"
 
 export class DatabaseConnector {
@@ -18,6 +18,18 @@ export class DatabaseConnector {
   }
 }
 
+export class SQLiteDatabase extends DatabaseConnector {
+
+  db = open({
+    filename: ":memory:",
+    driver: sqlite3.Database
+  })
+
+  constructor() {
+    super();
+  }
+}
+
 export class SQliteDatabaseConnector extends DatabaseConnector {
   constructor() {
     super();
@@ -25,7 +37,8 @@ export class SQliteDatabaseConnector extends DatabaseConnector {
     (async () => {
     // open the database
       const db = await open({
-        filename: '/app/database.db',
+        // filename: '/app/database.db',
+        filename: ":memory:",
         driver: sqlite3.Database
       });
 
