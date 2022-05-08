@@ -3,14 +3,23 @@ import { Database, open } from 'sqlite'
 import mysql from "mysql2"
 
 export class DatabaseConnector {
-  static database = null
-
   setDatabase(db) {
-    DatabaseConnector.database = db
+    DatabaseConnector.db = open({
+      filename: "/app/db/default.db",
+      driver: sqlite3.Database
+    })
   }
 
-  query() {
+  query(query, args = []) {
+    return new Promise((resolve, reject) => {
+      DatabaseConnector.db.query(query, args).then((err, result) => {
+        if (err) rej(err);
 
+        console.log(result);
+
+        resolve(result);
+      })
+    });
   }
 
   isDatabaseAvailable() {
@@ -18,18 +27,9 @@ export class DatabaseConnector {
   }
 }
 
-export class SQLiteDatabase extends DatabaseConnector {
-
-  db = open({
-    filename: ":memory:",
-    driver: sqlite3.Database
-  })
-
-  constructor() {
-    super();
-  }
-}
-
+/**
+ * @deprecated
+ */
 export class SQliteDatabaseConnector extends DatabaseConnector {
   constructor() {
     super();
@@ -51,6 +51,9 @@ export class SQliteDatabaseConnector extends DatabaseConnector {
   }
 }
 
+/**
+ * @deprecated
+ */
 export default class MySQLDatabaseConnector extends DatabaseConnector {
     constructor() {
       super();

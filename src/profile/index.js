@@ -1,11 +1,12 @@
 import express from 'express';
+import { lookupIdentifier } from 'webfinger/src/lookup';
 
 export default (app) => {
     const router = express.Router();
 
-    app.get("/:id", (req, res) => {
+    app.get("/:id", (next, req, res) => {
         //proxy webfinger here?
-
+        
         res.end();
     });
 

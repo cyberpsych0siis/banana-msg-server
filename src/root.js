@@ -9,30 +9,31 @@ import BananaMessage from "./model/Message.js";
 import SuccessMessage from "./success/SuccessMessage.js";
 import BaseError from "./model/Error.js";
 
-
-
-export default (app) => {
+export default (app, debug = false) => {
     const prefix = process.env.PREFIX || "/";
     const route = express.Router();
 
     //make webfinger external?
     /* Init Webfinger here */
-    webfinger(app, new SQliteDatabaseConnector());
+    // webfinger(app, new SQliteDatabaseConnector());
+
+
 
     /* Init JWT here */
-    // jwtconfig(route);
+    jwtconfig(route);
     
-    if (process.env.NODE_ENV != "production") {
+    //Add routes here that you want to be enabled in development only
+    if (process.env.NODE_ENV != "production" | debug) {
 
         route.get("/crash", (req, res, next) => {
             throw new BaseError("Hello");
         });
-        
+
         route.get("/nocrash", (req, res, next) => {
             next({
                 "msg": "here for a crash free world"
             });
-        })
+        });
     }
 
     app.use(prefix, route);

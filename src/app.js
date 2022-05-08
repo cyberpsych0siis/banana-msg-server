@@ -2,40 +2,38 @@ import fs from 'fs';
 import express from "express";
 
 import MyRoute from "./root.js";
-// import webfinger from 'webfinger';
 import dotenv from 'dotenv';
 
-// import devices from './devices/index.js';
 import morgan from 'morgan';
-import BaseError from './model/Error.js';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8080;
 
+/* Use JSON by default */
 app.use(express.json())
+
+/* HTTP Logger */
 app.use(morgan('dev'));
 
 /* Add Root Route here */
 MyRoute(app);
 
-/* Errorhandler */
+/* REST-Interface Proxy */
 app.use((response, req, res, next) => {
-    console.log("hmm");
-
-    let success = !(response instanceof BaseError)
+    let success = !(response instanceof Error)
     let successData = null;
     let errorData = null;
 
-    if (response instanceof BaseError) {
-        res.status(500);
+    if (response instanceof Error) {
+        res.status(response.status ?? 500);
         errorData = response;
         console.log(errorData);
     } else {
-        // res.send(JSON.stringify(err))
         res.status(200);
         successData = response;
+        console.log(successData);
     }
 
     res.send(JSON.stringify({
