@@ -1,14 +1,23 @@
 import express from 'express';
-import { lookupIdentifier } from 'webfinger/src/lookup';
+import { queryGet } from '../connector/database.js';
+// import { lookupIdentifier } from 'webfinger/src/lookup';
+import { getJwtConfig } from '../jwt/config.js';
 
-export default (app) => {
+export default (app, db) => {
     const router = express.Router();
+
+    router.use(getJwtConfig())
 
     app.get("/:id", (next, req, res) => {
         //proxy webfinger here?
         
-        res.end();
+        // res.end();
+        // queryGet(db, )
     });
+
+    app.get("/test", (req, res, next) => {
+        next("works");
+    })
 
     //Friend Request - doesnt work rn
     app.post("/:id/freq", (req, res) => {

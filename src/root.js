@@ -1,26 +1,24 @@
 import express from "express";
 import webfinger from 'webfinger';
-import jwtconfig from './jwt/config.js'
-
-// import SqlSingleton from "webfinger/src/sql.js";
-import MySQLDatabaseConnector, { SQliteDatabaseConnector } from "./connector/DatabaseConnector.js";
-import Contact from "./model/Contact.js";
-import BananaMessage from "./model/Message.js";
-import SuccessMessage from "./success/SuccessMessage.js";
+import { getJwtConfig } from './jwt/config.js'
 import BaseError from "./model/Error.js";
+import login from "./jwt/login.js";
+import profile from "./profile/index.js";
+import { DatabaseConnector } from "./connector/DatabaseConnector.js";
+import messages from "./messages/index.js";
 
-export default (app, debug = false) => {
+export default (app, db, debug = false) => {
     const prefix = process.env.PREFIX || "/";
     const route = express.Router();
+    // route.use()
 
     //make webfinger external?
     /* Init Webfinger here */
-    // webfinger(app, new SQliteDatabaseConnector());
+    // webfinger(app, db);
 
-
-
-    /* Init JWT here */
-    jwtconfig(route);
+    login(route, db);
+    // profile(route, db);
+    messages(route, db);
     
     //Add routes here that you want to be enabled in development only
     if (process.env.NODE_ENV != "production" | debug) {
@@ -37,6 +35,27 @@ export default (app, debug = false) => {
     }
 
     app.use(prefix, route);
+
+    /* REST-Interface Proxy */
+    route.use((response, req, res, next) => {
+    let success = !(response instanceof Error);
+    let successData = null;
+    let errorData = null;
+    
+    if (!success) {
+        res.status(response.status ?? 500);
+        errorData = { message: response.message, code: response.errno ?? -1 };
+    } else {
+        res.status(200);
+        successData = response;
+    }
+
+    res.send(JSON.stringify({
+        success: success,
+        successData: successData,
+        errorData: errorData
+    }));
+});
 }
 
     /* api.post("/send", (req, res) => {
