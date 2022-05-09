@@ -27,7 +27,7 @@ export default (app, db, debug = false) => {
             throw new BaseError("Hello");
         });
 
-        route.get("/nocrash", (req, res, next) => {
+        route.get("/nocrash", getJwtConfig(), (req, res, next) => {
             next({
                 "msg": "here for a crash free world"
             });
@@ -43,12 +43,15 @@ export default (app, db, debug = false) => {
     let errorData = null;
     
     if (!success) {
+        console.error(response)
         res.status(response.status ?? 500);
         errorData = { message: response.message, code: response.errno ?? -1 };
     } else {
         res.status(200);
         successData = response;
     }
+
+    console.log(success, successData, errorData);
 
     res.send(JSON.stringify({
         success: success,

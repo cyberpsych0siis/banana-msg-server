@@ -14,10 +14,10 @@ export default (app, db) => {
                 ":username": username
             });
 
-            if (data.length == 0 | !bcrypt.compareSync(password, data[0].password)) {
+            if (data.length == 0 || !bcrypt.compareSync(password, data[0].password)) {
                 next(new BaseError("Username or password wrong"));
             } else {
-                next(createToken(data[0].userId))
+                next(createToken(username))
             }
         } catch (e) {
             next(e);
@@ -45,7 +45,8 @@ export default (app, db) => {
                 ":pw": pwHash,
                 ":b64publickey": publickey ?? "no pubkey"
             })
-            next(createToken(data.lastID))
+            console.log("New ID: " + data.lastID)
+            next(createToken(username))
         } catch (e) {
 
             //error handler
