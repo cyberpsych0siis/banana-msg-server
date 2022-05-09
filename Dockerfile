@@ -10,10 +10,10 @@ WORKDIR /app
 
 COPY . .
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install sqlite3
+#RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install sqlite3
 
 ENV NODE_ENV dev
-RUN yarn add sqlite3
+#RUN yarn add sqlite3
 RUN yarn
 
-CMD ["yarn", "prod"]
+CMD ["yarn", "start"]
