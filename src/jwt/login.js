@@ -25,7 +25,11 @@ export default (app, db) => {
     });
 
     route.post("/logout", getJwtConfig(), (req, res, next) => {
+        //invalidate jwt somehow here
 
+        next({
+            token: ""
+        })
     });
 
     route.post("/register", async (req, res, next) => {
