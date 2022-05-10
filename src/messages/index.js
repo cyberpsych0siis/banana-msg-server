@@ -26,7 +26,7 @@ export default (app, db) => {
             const qparams = {
                 ":fromUser": senderAddress,
                 ":toUser": decodeURIComponent(name) + "@" + to.host,
-                ":textBody": req.body.object.content,
+                ":textBody": encodeURIComponent(req.body.object.content),
                 ":timestamp": Date.now()
             }
 
@@ -67,6 +67,10 @@ export default (app, db) => {
 
         await querySet(db, "setChecked", {
             ":forUser": req.auth.sub + "@" + hostpart
+        })
+
+        data = data.map((e) => {
+            e.textBody = decodeURIComponent(e.textBody)
         })
 
         next(data);
