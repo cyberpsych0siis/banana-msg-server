@@ -6,7 +6,6 @@ export default class ActivityPubMessage {
         this.recepientName = recepientName;
         this.recepientHref = recepientProfileLink;
         this.body = body;
-        // console.log(body);
     }
 
     toString() {

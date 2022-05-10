@@ -47,13 +47,15 @@ export default (app, db) => {
 
     //sends back the current inbox for user req.auth.sub
     route.get("/inbox", getJwtConfig(), async (req, res, next) => {
-        // console.log(req.auth.sub);
+        
+        const hostpart = new URL(req.auth.iss).host;
+        
         let data = await queryGet(db, "selectMessagesForUser", {
-            ":forUser": req.auth.sub + "@" + req.auth.iss
+            ":forUser": req.auth.sub + "@" + hostpart
         });
 
         await querySet(db, "setChecked", {
-            ":forUser": req.auth.sub + "@" + req.auth.iss
+            ":forUser": req.auth.sub + "@" + hostpart
         })
 
         next(data);
