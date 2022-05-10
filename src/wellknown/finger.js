@@ -40,7 +40,7 @@ export const webfingerListener = async function (db, req, res) {
 
         //lookup account identifier
         const r = URL.parse(query.get("resource"));
-        console.log(r.auth);
+        // console.log(r.auth);
 
         lookupIdentifier(db, r).then(data => {
             
