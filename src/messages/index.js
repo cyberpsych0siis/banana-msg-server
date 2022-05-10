@@ -23,7 +23,23 @@ export default (app, db) => {
         next(data);
     });
 
-    //Receives the message for userid :id
+
+    /* 
+{
+  "@context": "https://www.w3.org/ns/activitystreams",
+  "id": "http://example.org/foo",
+  "type": "Note",
+  "name": "My favourite stew recipe",
+  "attributedTo": {
+    "id": "http://joe.website.example/",
+    "type": "Person",
+    "name": "Joe Smith"
+  },
+  "published": "2014-08-21T12:34:56Z"
+}
+    */
+
+    //Represents the activitypub inbox for the user :user
     route.post("/:user", async (req, res, next) => {
         const from = req.auth.sub;
         const issuer = req.auth.iss;
@@ -36,43 +52,29 @@ export default (app, db) => {
             ":username": to
         });
 
-        // if (data.ex) {
-        //     console.log(data);
-        //     console.log(from, to, msg);
-        //     next("ok");
-        // } else {
-        //     next(new BaseError("The requested user wasn't found"));
-        // }
         if (check.ex) {
 
             let issuerUrl = new URL(issuer);
             let completeIssuerUrl = new URL(`acct:${from}@${issuerUrl.hostname}`)
-            
+
             // console.log(completeIssuerUrl)
-            
-            
+
+
             let data = await querySet(db, "sendMessageToLocalUserInbox", {
                 ":fromUser": completeIssuerUrl.toString(),
                 ":toUser": to,
                 ":textBody": msg,
                 ":timestamp": Date.now()
             });
-            
+
             console.log(data);
             console.log(completeIssuerUrl.toString(), to, msg);
-            
+
             console.log(`Origin: acct:${from}@${issuerUrl.hostname}`)
             next({})
         } else {
             next(new BaseError("User not found"))
         }
-
-/*         let data = await querySet(db, "sendMessageToLocalUserInbox", {
-            ":fromUser": "",
-            ":toUser": "", 
-            ":textBody": "",
-            ":timestamp": ""
-        }) */
     });
 
     app.use("/messages", route);

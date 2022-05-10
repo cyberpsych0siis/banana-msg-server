@@ -16,4 +16,4 @@ ENV NODE_ENV dev
 #RUN yarn add sqlite3
 RUN yarn
 
-CMD ["yarn", "start"]
+CMD ["yarn", "prod"]

@@ -9,6 +9,8 @@ import login from './jwt/login.js';
 
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
+// import { webfingerListener } from './wellknown/finger.js';
+import wellknown from './wellknown/index.js';
 // import { setDb } from './connector/database.js';
 
 /*import { Database, open } from 'sqlite' */
@@ -32,6 +34,7 @@ open({
     driver: sqlite3.Database
 }).then(db => {
     root(app, db);
+    wellknown(app, db);
 });
 
 // })()

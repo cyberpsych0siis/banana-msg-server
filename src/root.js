@@ -1,11 +1,11 @@
 import express from "express";
-import webfinger from 'webfinger';
 import { getJwtConfig } from './jwt/config.js'
 import BaseError from "./model/Error.js";
 import login from "./jwt/login.js";
 import profile from "./profile/index.js";
-import { DatabaseConnector } from "./connector/DatabaseConnector.js";
+// import { DatabaseConnector } from "./connector/DatabaseConnector.js";
 import messages from "./messages/index.js";
+// import wellknown from './wellknown/index.js';
 
 export default (app, db, debug = false) => {
     const prefix = process.env.PREFIX || "/";
@@ -34,6 +34,8 @@ export default (app, db, debug = false) => {
         });
     }
 
+    // wellknown(route, db);
+
     app.use(prefix, route);
 
     /* REST-Interface Proxy */
@@ -53,6 +55,11 @@ export default (app, db, debug = false) => {
 
     console.log(success, successData, errorData);
 
+    /*                 res.writeHead(200, "Success", {
+                    "Content-Length": Buffer.byteLength(finalData),
+                    "Content-Type": "application/json"
+                }); */
+
     res.send(JSON.stringify({
         success: success,
         successData: successData,
@@ -61,14 +68,7 @@ export default (app, db, debug = false) => {
 });
 }
 
-    /* api.post("/send", (req, res) => {
-        const { message, from, to } = req.body;
-
-        const msg = new BananaMessage(message, from, to);
-        console.log(msg);
-        const success = new SuccessMessage(req, res, msg);
-    });
-
+    /*
     //Doesn't work
     api.get("/friend_request", (req, res) => {
 

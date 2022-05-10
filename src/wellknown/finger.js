@@ -1,6 +1,6 @@
 import URL from 'url';
 import { lookupIdentifier, createDataEntry } from './lookup.js';
-import sql from './sql.js';
+// import sql from '../../WebFinger.js/src/sql.js';
 
 /**
  * Returns the value set in $PORT. Returns 80 if nothing is specified
@@ -23,7 +23,7 @@ export const getHost = function() {
  * @returns {string} Domain as string
  */
 export const getDomain = function() {
-    return process.env.JWT_AUDIENCE ?? "localhost";
+    return new URL.parse(process.env.JWT_AUDIENCE).hostname ?? "localhost";
 }
 
 /**
@@ -32,37 +32,36 @@ export const getDomain = function() {
  * @param {http.ServerResponse} res The Response object
  * @returns 
  */
-export const webfingerListener = function (req, res) {
+export const webfingerListener = async function (db, req, res) {
     const query = new URLSearchParams(URL.parse(req.url).query);
 
     //only process requests that have the resource query set
     if (query.has("resource")) {
 
         //lookup account identifier
-        lookupIdentifier(URL.parse(query.get("resource"))).then(data => {
-
+        lookupIdentifier(db, URL.parse(query.get("resource"))).then(data => {
             
             //if lookup was successful and a user was found...
             if (data) {
                 
                 //Convert the data to JSON String
-                const finalData = JSON.stringify(data.map(data => {
-                    return createDataEntry(data);
-                }));
-                
+                // const finalData = JSON.stringify(data.map(data => {
+                //     return createDataEntry(data);
+                // }));
+                const finalData = JSON.stringify(createDataEntry(data));
                 //...return status 200 and the data in the body as json...
-                res.writeHead(200, "Success", {
-                    "Content-Length": Buffer.byteLength(finalData),
-                    "Content-Type": "application/json"
-                });
-                res.end(finalData);
+                res.setHeader("Content-Length", Buffer.byteLength(finalData));
+                res.setHeader("Content-Type", "application/json");
+
+                res.status(200).end(finalData);
+                // next(finalData);
                 return;
                 
                 //...else data is null and we couldn't find the user. Return HTTP Code 404 and end the connection
             } else {
                 console.log("Request didn't yield any results " + query)
-                res.writeHead(404);
-                res.end();
+                // res.writeHead(404);
+                res.status(400).end();
                 return;
             }
         });
@@ -75,7 +74,9 @@ export const webfingerListener = function (req, res) {
     }
 }
 
-export default (app, mysql) => {
-    sql.setSql(mysql);
-    app.get("/.well-known/webfinger", webfingerListener);
+export default (app, db) => {
+    // sql.setSql(mysql);
+    app.get("/webfinger", (req, res, next) => {
+        webfingerListener(db, req, res);
+    });
 }
