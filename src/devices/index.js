@@ -29,10 +29,10 @@ export default (app) => {
         // res.end();
 
     });
-
+/* 
     route.post("/unregister", (req, res) => {
         res.end();
-    });
+    }); */
 
     app.use("/devices", route);
 }
