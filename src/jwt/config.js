@@ -24,20 +24,16 @@ export function createToken(subject) {
         "token": jwt.sign({
             algorithm: "HS256",
             sub: subject,
-            // aud: "http://localhost:8080/",
-            // iss: "http://localhost:8080/"
             aud: process.env.JWT_AUDIENCE,
             iss: process.env.JWT_ISSUER
             // username: 
-        }, "top secret")
+        }, process.env.JWT_SECRET)
     };
 }
 
 export function getJwtConfig() {
     return expressjwt({
-        secret: "top secret",
-        // audience: "http://localhost:8080/",
-        // issuer: "http://localhost:8080/",
+        secret: process.env.JWT_SECRET,
         audience: process.env.JWT_AUDIENCE,
         issuer: process.env.JWT_ISSUER,
         algorithms: ["HS256"]
