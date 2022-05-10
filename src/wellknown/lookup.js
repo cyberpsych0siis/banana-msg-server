@@ -16,7 +16,7 @@ export const lookupIdentifier = async function (db, identifier) {
     console.log(useStrictDomainChecking(), getDomain(), host);
     if (protocol === "acct:" && (useStrictDomainChecking() && host === getDomain())) {
         //search for auth in database
-        console.log("[Lookup] Searching for Username " + auth + " on " + process.env.JWT_AUDIENCE)
+        console.log("[Lookup] Searching for Username " + auth + " for domain " + process.env.JWT_AUDIENCE)
         const userdata = await searchForUserdata(db, auth);
         // console.log(userdata);
 

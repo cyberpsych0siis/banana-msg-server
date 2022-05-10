@@ -11,6 +11,8 @@ import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 // import { webfingerListener } from './wellknown/finger.js';
 import wellknown from './wellknown/index.js';
+
+import https from 'https';
 // import { setDb } from './connector/database.js';
 
 /*import { Database, open } from 'sqlite' */
@@ -40,11 +42,15 @@ open({
 // })()
 
 
+if (process.env.NODE_ENV == "dev") {
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+}
 
 /* Let App Listen to port */
 if (process.env.USE_SSL == "true") {
-    var privateKey = fs.readFileSync(process.env.SSL_KEY_FILE ?? 'ssl/key.pem');
-    var certificate = fs.readFileSync(process.env.SSL_CERT_FILE ?? 'ssl/cert.pem');
+    let privateKey, certificate;
+    privateKey = fs.readFileSync(process.env.SSL_KEY_FILE ?? 'ssl/key.pem');
+    certificate = fs.readFileSync(process.env.SSL_CERT_FILE ?? 'ssl/cert.pem');
 
     https.createServer({
         key: privateKey,

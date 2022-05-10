@@ -9,40 +9,28 @@ import ActivityPubMessage from '../model/ActivityPubMessage.js';
 export default (app, db) => {
     const route = express.Router();
 
-    //activityhub receiver route
+    //activitypub receiver route
     route.post("/", async (req, res, next) => {
         const to = new URL(getHost());
-        console.log(req.body);
         let u2 = new URL(req.body.actor);
-        const senderAddress = req.body.from.name + "@" +  u2.host;
+        const senderAddress = req.body.from.name + "@" + u2.host;
         const name = req.body.to.name;
 
-        // console.log(getHost());
 
         console.log(senderAddress);
         if (to.origin == u2.origin) {
-            // console.log("Stay internal");
-            console.log(decodeURIComponent(name))
             let check = await queryGetOnce(db, "doesUserExist", {
                 ":username": decodeURIComponent(name)
             });
 
             if (check.ex) {
-                // console.log()
-                // let issuerUrl = new URL(issuer);
-                // let completeIssuerUrl = new URL(`acct:${from}@${issuerUrl.hostname}`)
-
-                let data = await querySet(db, "sendMessageToLocalUserInbox", {
+                await querySet(db, "sendMessageToLocalUserInbox", {
                     ":fromUser": senderAddress,
                     ":toUser": decodeURIComponent(name) + "@" + to.host,
                     ":textBody": req.body.object.content,
                     ":timestamp": Date.now()
                 });
 
-                // console.log(data);
-                // console.log(completeIssuerUrl.toString(), to, msg);
-
-                // console.log(`Origin: acct:${from}@${issuerUrl.hostname}`)
                 next({})
             } else {
                 next(new BaseError("User not found"))
@@ -52,7 +40,7 @@ export default (app, db) => {
 
     //sends back the current inbox for user req.auth.sub
     route.get("/inbox", getJwtConfig(), async (req, res, next) => {
-        console.log(req.auth.sub);
+        // console.log(req.auth.sub);
         let data = await queryGet(db, "selectMessagesForUser", {
             ":forUser": req.auth.sub + "@" + req.auth.iss
         });
@@ -61,7 +49,7 @@ export default (app, db) => {
             ":forUser": req.auth.sub + "@" + req.auth.iss
         })
 
-        console.log(data);
+        // console.log(data);
         next(data);
     });
 
@@ -76,7 +64,12 @@ export default (app, db) => {
         // console.log(senderProfile);
         const strippedFromPath = req.url.substring(1);
         // console.log(strippedFromPath);
-        const response = await fetch('http://' + to.host + `/.well-known/webfinger?resource=${strippedFromPath}`)
+        // const proto = process.env.NODE_ENV != "dev" ? "https" : "http";
+
+        const webfingerRequestURI = 'https://' + to.host + `/.well-known/webfinger?resource=${strippedFromPath}`;
+        console.log("[Webfinger] " + webfingerRequestURI);
+
+        const response = await fetch(webfingerRequestURI)
         // console.log(response);
         if (response.status == 404) {
             next(new BaseError("User not found"))
@@ -100,7 +93,7 @@ export default (app, db) => {
                 fetch(sliced.href, {
                     method: "POST",
                     body: newMessage,
-                    headers: {'Content-Type': 'application/json'}
+                    headers: {'Content-Type': 'application/json'},
                 }).then((data) => {
                     // console.log(data);
                     next({});
@@ -109,38 +102,6 @@ export default (app, db) => {
                 next(new BaseError("User not found"))
             }
         }
-        // }
-
-
-        // console.log(to, u2.host);
-
-        // let originString = new URL(`acct:${from}`)
-
-        /* 
-
-        if (check.ex) {
-
-            let issuerUrl = new URL(issuer);
-            let completeIssuerUrl = new URL(`acct:${from}@${issuerUrl.hostname}`)
-
-            // console.log(completeIssuerUrl)
-
-
-            let data = await querySet(db, "sendMessageToLocalUserInbox", {
-                ":fromUser": completeIssuerUrl.toString(),
-                ":toUser": to,
-                ":textBody": msg,
-                ":timestamp": Date.now()
-            });
-
-            console.log(data);
-            console.log(completeIssuerUrl.toString(), to, msg);
-
-            console.log(`Origin: acct:${from}@${issuerUrl.hostname}`)
-            next({})
-        } else {
-            next(new BaseError("User not found"))
-        } */
     });
 
     app.use("/messages", route);

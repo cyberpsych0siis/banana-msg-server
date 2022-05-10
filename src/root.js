@@ -53,7 +53,7 @@ export default (app, db, debug = false) => {
         successData = response;
     }
 
-    console.log(success, successData, errorData);
+    // console.log(success, successData, errorData);
 
     /*                 res.writeHead(200, "Success", {
                     "Content-Length": Buffer.byteLength(finalData),
