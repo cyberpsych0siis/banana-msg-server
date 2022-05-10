@@ -18,7 +18,8 @@ export const lookupIdentifier = async function (db, identifier) {
         //search for auth in database
         console.log("[Lookup] Searching for Username " + auth + " for domain " + process.env.JWT_AUDIENCE)
         const userdata = await searchForUserdata(db, auth);
-        // console.log(userdata);
+        console.log("Found userdata:")
+        console.log(userdata);
 
         if (userdata) {
             //Object.assign(userdata, {subject: href});

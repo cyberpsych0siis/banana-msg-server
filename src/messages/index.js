@@ -17,19 +17,23 @@ export default (app, db) => {
         const name = req.body.to.name;
 
 
-        console.log(senderAddress);
+        console.log("New Message from: " + senderAddress);
         if (to.origin == u2.origin) {
             let check = await queryGetOnce(db, "doesUserExist", {
                 ":username": decodeURIComponent(name)
             });
 
             if (check.ex) {
-                await querySet(db, "sendMessageToLocalUserInbox", {
+                const qparams = {
                     ":fromUser": senderAddress,
                     ":toUser": decodeURIComponent(name) + "@" + to.host,
                     ":textBody": req.body.object.content,
                     ":timestamp": Date.now()
-                });
+                }
+
+                let dbresponse = await querySet(db, "sendMessageToLocalUserInbox", qparams);
+
+                console.log(qparams);
 
                 next({})
             } else {
@@ -70,6 +74,7 @@ export default (app, db) => {
         console.log("[Webfinger] " + webfingerRequestURI);
 
         const response = await fetch(webfingerRequestURI)
+        // console.log(await response.json());
         // console.log(response);
         if (response.status == 404) {
             next(new BaseError("User not found"))
