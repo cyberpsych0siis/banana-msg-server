@@ -16,7 +16,7 @@ export const lookupIdentifier = async function (db, identifier) {
     console.log(useStrictDomainChecking(), getDomain(), host);
     if (protocol === "acct:" && (useStrictDomainChecking() && host === getDomain())) {
         //search for auth in database
-        console.log("Searching for Username " + auth + " on " + process.env.JWT_AUDIENCE)
+        console.log("[Lookup] Searching for Username " + auth + " on " + process.env.JWT_AUDIENCE)
         const userdata = await searchForUserdata(db, auth);
         // console.log(userdata);
 
@@ -36,7 +36,8 @@ export function createDataEntry(dbSubject) {
         // id: uuidv4(),
         subject: ownAddress + "/profile/" + dbSubject.username,
         aliases: [
-            ownAddress
+            ownAddress,
+            dbSubject.username
         ],
         links: [
             {
