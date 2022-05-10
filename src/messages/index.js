@@ -18,38 +18,49 @@ export default (app, db) => {
 
 
         console.log("New Message from: " + senderAddress);
-        // if (to.origin =! u2.origin) {
-            let check = await queryGetOnce(db, "doesUserExist", {
-                ":username": decodeURIComponent(name)
-            });
+        let check = await queryGetOnce(db, "doesUserExist", {
+            ":username": decodeURIComponent(name)
+        });
 
-            if (check.ex) {
-                const qparams = {
-                    ":fromUser": senderAddress,
-                    ":toUser": decodeURIComponent(name) + "@" + to.host,
-                    ":textBody": req.body.object.content,
-                    ":timestamp": Date.now()
-                }
-
-                let dbresponse = await querySet(db, "sendMessageToLocalUserInbox", qparams);
-
-                console.log(qparams);
-                console.log(dbresponse);
-
-                next({})
-            } else {
-                next(new BaseError("User not found"))
+        if (check.ex) {
+            const qparams = {
+                ":fromUser": senderAddress,
+                ":toUser": decodeURIComponent(name) + "@" + to.host,
+                ":textBody": req.body.object.content,
+                ":timestamp": Date.now()
             }
-        // } else {
-            // next(new BaseError("receiver origin didn't match with hostname"))
-        // }
+
+            let dbresponse = await querySet(db, "sendMessageToLocalUserInbox", qparams);
+
+            console.log(qparams);
+            console.log(dbresponse);
+
+            next({})
+        } else {
+            next(new BaseError("User not found"))
+        }
     });
+
+    route.get("/all", getJwtConfig(), async (req, res, next) => {
+
+        const hostpart = new URL(req.auth.iss).host;
+
+        let data = await queryGet(db, "allMessagesForUser", {
+            ":forUser": req.auth.sub + "@" + hostpart
+        });
+
+        await querySet(db, "setChecked", {
+            ":forUser": req.auth.sub + "@" + hostpart
+        })
+
+        next(data);
+    })
 
     //sends back the current inbox for user req.auth.sub
     route.get("/inbox", getJwtConfig(), async (req, res, next) => {
-        
+
         const hostpart = new URL(req.auth.iss).host;
-        
+
         let data = await queryGet(db, "selectMessagesForUser", {
             ":forUser": req.auth.sub + "@" + hostpart
         });
@@ -96,7 +107,7 @@ export default (app, db) => {
                 fetch(sliced.href, {
                     method: "POST",
                     body: newMessage,
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                 }).then((data) => {
                     next({});
                 })
