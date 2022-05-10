@@ -23,7 +23,7 @@ export const getHost = function() {
  * @returns {string} Domain as string
  */
 export const getDomain = function() {
-    return new URL.parse(process.env.JWT_AUDIENCE).hostname ?? "localhost";
+    return new URL.parse(process.env.JWT_AUDIENCE).host ?? "localhost";
 }
 
 /**
@@ -39,7 +39,10 @@ export const webfingerListener = async function (db, req, res) {
     if (query.has("resource")) {
 
         //lookup account identifier
-        lookupIdentifier(db, URL.parse(query.get("resource"))).then(data => {
+        const r = URL.parse(query.get("resource"));
+        console.log(r.auth);
+
+        lookupIdentifier(db, r).then(data => {
             
             //if lookup was successful and a user was found...
             if (data) {

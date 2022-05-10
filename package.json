@@ -20,6 +20,7 @@
     "ioredis": "^5.0.4",
     "jwks-rsa": "^2.1.0",
     "mysql2": "^2.3.3",
+    "node-fetch": "^3.2.4",
     "nodemon": "^2.0.15",
     "sqlite": "^4.1.1",
     "sqlite3": "^5.0.7",

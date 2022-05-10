@@ -12,9 +12,9 @@ const useStrictDomainChecking = function() {
 
 export const lookupIdentifier = async function (db, identifier) {
     // console.log(identifier);
-    console.log(useStrictDomainChecking(), getDomain());
-    const { protocol, href, auth, hostname } = identifier;
-    if (protocol === "acct:" && (useStrictDomainChecking() && hostname === getDomain())) {
+    const { protocol, href, auth, host } = identifier;
+    console.log(useStrictDomainChecking(), getDomain(), host);
+    if (protocol === "acct:" && (useStrictDomainChecking() && host === getDomain())) {
         //search for auth in database
         console.log("Searching for Username " + auth + " on " + process.env.JWT_AUDIENCE)
         const userdata = await searchForUserdata(db, auth);
@@ -50,15 +50,15 @@ export function createDataEntry(dbSubject) {
                 "type": "application/json",
                 "href": ownAddress + "/messages/" + dbSubject.username
             }, */
-            {
+/*             {
                 "rel": "publickey",
                 "type": "text/plain",
                 "href": ownAddress + "/.well-known/keys?resource=acct:" + dbSubject.username + "@" + getDomain()
-            },
+            }, */
             {
                 "rel": "self",
                 "type": "application/activity+json",
-                "href": ownAddress + "/messages/" + dbSubject.username
+                "href": ownAddress + "/messages/"
             },
             {
                 "rel": "http://ostatus.org/schema/1.0/subscribe",
