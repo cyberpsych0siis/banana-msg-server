@@ -56,7 +56,6 @@ export default (app, db) => {
             ":forUser": req.auth.sub + "@" + req.auth.iss
         })
 
-        // console.log(data);
         next(data);
     });
 
@@ -68,17 +67,12 @@ export default (app, db) => {
         const { msg } = req.body;
 
         const senderProfile = issuer + "/profile/" + from;
-        // console.log(senderProfile);
         const strippedFromPath = req.url.substring(1);
-        // console.log(strippedFromPath);
-        // const proto = process.env.NODE_ENV != "dev" ? "https" : "http";
 
         const webfingerRequestURI = 'https://' + to.host + `/.well-known/webfinger?resource=${strippedFromPath}`;
         console.log("[Webfinger] " + webfingerRequestURI);
 
         const response = await fetch(webfingerRequestURI)
-        // console.log(await response.json());
-        // console.log(response);
         if (response.status == 404) {
             next(new BaseError("User not found"))
         } else {
@@ -96,14 +90,12 @@ export default (app, db) => {
 
             if (sliced.length == 1) {
                 sliced = sliced[0];
-                // console.log(sliced.href);
 
                 fetch(sliced.href, {
                     method: "POST",
                     body: newMessage,
                     headers: {'Content-Type': 'application/json'},
                 }).then((data) => {
-                    // console.log(data);
                     next({});
                 })
             } else {
