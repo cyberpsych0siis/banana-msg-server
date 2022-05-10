@@ -18,7 +18,7 @@ export default (app, db) => {
 
 
         console.log("New Message from: " + senderAddress);
-        if (to.origin == u2.origin) {
+        // if (to.origin =! u2.origin) {
             let check = await queryGetOnce(db, "doesUserExist", {
                 ":username": decodeURIComponent(name)
             });
@@ -34,12 +34,15 @@ export default (app, db) => {
                 let dbresponse = await querySet(db, "sendMessageToLocalUserInbox", qparams);
 
                 console.log(qparams);
+                console.log(dbresponse);
 
                 next({})
             } else {
                 next(new BaseError("User not found"))
             }
-        }
+        // } else {
+            // next(new BaseError("receiver origin didn't match with hostname"))
+        // }
     });
 
     //sends back the current inbox for user req.auth.sub
