@@ -33,28 +33,32 @@ export default (app, db) => {
     });
 
     route.post("/register", async (req, res, next) => {
-        const {
-            username,
-            password,
-            publickey   //must be generated on the device and sent on registration
-        } = req.body;
+        if (process.env.DISABLE_SIGNUP != "true") {
+            const {
+                username,
+                password,
+                publickey   //must be generated on the device and sent on registration
+            } = req.body;
 
-        const salt = bcrypt.genSaltSync(10);
-        const pwHash = bcrypt.hashSync(password, salt);
+            const salt = bcrypt.genSaltSync(10);
+            const pwHash = bcrypt.hashSync(password, salt);
 
-        try {
+            try {
 
-            let data = await querySet(db, "registerUser", {
-                ":username": username,
-                ":pw": pwHash,
-                ":b64publickey": publickey ?? "no pubkey"
-            })
-            console.log("New ID: " + data.lastID)
-            next(createToken(username))
-        } catch (e) {
+                let data = await querySet(db, "registerUser", {
+                    ":username": username,
+                    ":pw": pwHash,
+                    ":b64publickey": publickey ?? "no pubkey"
+                })
+                console.log("New ID: " + data.lastID)
+                next(createToken(username))
+            } catch (e) {
 
-            //error handler
-            next(e);
+                //error handler
+                next(e);
+            }
+        } else {
+            next(new BaseError("Signups are disabled on this server"));
         }
     });
 
