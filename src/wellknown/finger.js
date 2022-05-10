@@ -62,9 +62,9 @@ export const webfingerListener = async function (db, req, res) {
                 
                 //...else data is null and we couldn't find the user. Return HTTP Code 404 and end the connection
             } else {
-                console.log("Request didn't yield any results " + query)
+                console.log("Request didn't yield any results ", r)
                 // res.writeHead(404);
-                res.status(400).end();
+                res.status(404).end();
                 return;
             }
         });

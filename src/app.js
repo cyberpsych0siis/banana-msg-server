@@ -1,23 +1,12 @@
 import fs from 'fs';
 import express from "express";
-
 import root from "./root.js";
 import dotenv from 'dotenv';
-
 import morgan from 'morgan';
-import login from './jwt/login.js';
-
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
-// import { webfingerListener } from './wellknown/finger.js';
 import wellknown from './wellknown/index.js';
-
 import https from 'https';
-// import { setDb } from './connector/database.js';
-
-/*import { Database, open } from 'sqlite' */
-
-// const sqlite3 = require('sqlite3').verbose();
 
 dotenv.config();
 
@@ -39,9 +28,6 @@ open({
     wellknown(app, db);
 });
 
-// })()
-
-
 if (process.env.NODE_ENV == "dev") {
     process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 }
@@ -61,4 +47,8 @@ if (process.env.USE_SSL == "true") {
     app.listen(port, () => {
         console.log("listening on port " + port);
     });
+}
+
+export function log(msg) {
+    if (process.env.NODE_ENV == "dev") console.log(msg);
 }

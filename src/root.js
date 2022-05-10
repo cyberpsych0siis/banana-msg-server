@@ -10,18 +10,13 @@ import messages from "./messages/index.js";
 export default (app, db, debug = false) => {
     const prefix = process.env.PREFIX || "/";
     const route = express.Router();
-    // route.use()
-
-    //make webfinger external?
-    /* Init Webfinger here */
-    // webfinger(app, db);
 
     login(route, db);
     // profile(route, db);
     messages(route, db);
     
     //Add routes here that you want to be enabled in development only
-    if (process.env.NODE_ENV != "production" | debug) {
+    if (process.env.NODE_ENV != "production" || debug) {
 
         route.get("/crash", (req, res, next) => {
             throw new BaseError("Hello");
@@ -33,8 +28,6 @@ export default (app, db, debug = false) => {
             });
         });
     }
-
-    // wellknown(route, db);
 
     app.use(prefix, route);
 
@@ -52,13 +45,6 @@ export default (app, db, debug = false) => {
         res.status(200);
         successData = response;
     }
-
-    // console.log(success, successData, errorData);
-
-    /*                 res.writeHead(200, "Success", {
-                    "Content-Length": Buffer.byteLength(finalData),
-                    "Content-Type": "application/json"
-                }); */
 
     res.send(JSON.stringify({
         success: success,
@@ -149,11 +135,7 @@ export default (app, db, debug = false) => {
         } else {
             res.status(401).end();
         }
-    })
-
-    api.get("/inbox", (req, res) => {
-
-    });*/
+    })*/
 
     // api.post("/register_device", async (req, res) => {
 

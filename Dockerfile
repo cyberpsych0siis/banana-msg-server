@@ -12,7 +12,7 @@ COPY . .
 
 #RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install sqlite3
 
-ENV NODE_ENV dev
+# ENV NODE_ENV dev
 #RUN yarn add sqlite3
 RUN yarn
 

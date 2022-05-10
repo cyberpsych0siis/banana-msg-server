@@ -24,8 +24,7 @@
     "nodemon": "^2.0.15",
     "sqlite": "^4.1.1",
     "sqlite3": "^5.0.7",
-    "uuid": "^8.3.2",
-    "webfinger": "./WebFinger.js"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "morgan": "^1.10.0"

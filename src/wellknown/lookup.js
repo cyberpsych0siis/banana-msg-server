@@ -18,11 +18,9 @@ export const lookupIdentifier = async function (db, identifier) {
         //search for auth in database
         console.log("[Lookup] Searching for Username " + auth + " for domain " + process.env.JWT_AUDIENCE)
         const userdata = await searchForUserdata(db, auth);
-        console.log("Found userdata:")
-        console.log(userdata);
-
+        
         if (userdata) {
-            //Object.assign(userdata, {subject: href});
+            console.log("Found userdata: " + userdata.username)
             return userdata
         }
     }
@@ -34,7 +32,6 @@ export function createDataEntry(dbSubject) {
     let ownAddress = process.env.JWT_AUDIENCE ?? "invalid issuer";
     
     return {
-        // id: uuidv4(),
         subject: ownAddress + "/profile/" + dbSubject.username,
         aliases: [
             ownAddress,
@@ -52,20 +49,20 @@ export function createDataEntry(dbSubject) {
                 "type": "application/json",
                 "href": ownAddress + "/messages/" + dbSubject.username
             }, */
-/*             {
+            {
                 "rel": "publickey",
                 "type": "text/plain",
-                "href": ownAddress + "/.well-known/keys?resource=acct:" + dbSubject.username + "@" + getDomain()
-            }, */
+                "href": ownAddress + "/.well-known/keys?resource=" + dbSubject.username
+            },
             {
                 "rel": "self",
                 "type": "application/activity+json",
                 "href": ownAddress + "/messages/"
-            },
+            }/* ,
             {
                 "rel": "http://ostatus.org/schema/1.0/subscribe",
                 "template": "https://mastodon.social/authorize_interaction?uri={uri}"
-            }
+            } */
         ]
     }
 }
