@@ -6,7 +6,7 @@ import { lookupIdentifier, createDataEntry } from './lookup.js';
  * Returns the value set in $PORT. Returns 80 if nothing is specified
  * @returns {number} the port as number
  */
-export const getPort = function() {
+export const getPort = function () {
     return process.env.PORT ?? 80;
 }
 
@@ -14,7 +14,7 @@ export const getPort = function() {
  * Returns the value set in $HOST. If nothing is specified it defaults to 0.0.0.0
  * @returns {string} Host-IP as string
  */
-export const getHost = function() {
+export const getHost = function () {
     return process.env.JWT_AUDIENCE ?? "0.0.0.0";
 }
 
@@ -22,7 +22,7 @@ export const getHost = function() {
  * Returns the value set in $DOMAIN. Returns "localhost" if nothing is specified
  * @returns {string} Domain as string
  */
-export const getDomain = function() {
+export const getDomain = function () {
     return new URL.parse(process.env.JWT_AUDIENCE).host ?? "localhost";
 }
 
@@ -43,10 +43,10 @@ export const webfingerListener = async function (db, req, res) {
         // console.log(r.auth);
 
         lookupIdentifier(db, r).then(data => {
-            
+
             //if lookup was successful and a user was found...
             if (data) {
-                
+
                 //Convert the data to JSON String
                 // const finalData = JSON.stringify(data.map(data => {
                 //     return createDataEntry(data);
@@ -59,7 +59,7 @@ export const webfingerListener = async function (db, req, res) {
                 res.status(200).end(finalData);
                 // next(finalData);
                 return;
-                
+
                 //...else data is null and we couldn't find the user. Return HTTP Code 404 and end the connection
             } else {
                 console.log("Request didn't yield any results ", r)
@@ -69,7 +69,7 @@ export const webfingerListener = async function (db, req, res) {
             }
         });
 
-    //if not send "Bad Request" and end the connection
+        //if not send "Bad Request" and end the connection
     } else {
         res.writeHead(400);
         res.end();

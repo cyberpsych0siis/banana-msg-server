@@ -1,4 +1,4 @@
-import express, { json } from 'express';
+import express from 'express';
 import { queryGet, queryGetOnce, querySet } from '../connector/database.js';
 import { getJwtConfig } from '../jwt/config.js';
 import BaseError from '../model/Error.js';

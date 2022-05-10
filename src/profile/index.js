@@ -10,7 +10,7 @@ export default (app, db) => {
 
     app.get("/:id", (next, req, res) => {
         //proxy webfinger here?
-        
+
         // res.end();
         // queryGet(db, )
     });

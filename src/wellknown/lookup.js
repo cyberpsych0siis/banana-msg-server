@@ -6,7 +6,7 @@ import { queryGetOnce } from '../connector/database.js';
 dotenv.config();
 
 
-const useStrictDomainChecking = function() {
+const useStrictDomainChecking = function () {
     return Boolean(process.env.STRICT_DOMAIN_CHECKING ?? "true");
 }
 
@@ -18,7 +18,7 @@ export const lookupIdentifier = async function (db, identifier) {
         //search for auth in database
         console.log("[Lookup] Searching for Username " + auth + " for domain " + process.env.JWT_AUDIENCE)
         const userdata = await searchForUserdata(db, auth);
-        
+
         if (userdata) {
             console.log("Found userdata: " + userdata.username)
             return userdata
@@ -30,7 +30,7 @@ export const lookupIdentifier = async function (db, identifier) {
 
 export function createDataEntry(dbSubject) {
     let ownAddress = process.env.JWT_AUDIENCE ?? "invalid issuer";
-    
+
     return {
         subject: ownAddress + "/profile/" + dbSubject.username,
         aliases: [
@@ -44,11 +44,11 @@ export function createDataEntry(dbSubject) {
                 "type": "text/html",
                 "href": ownAddress
             },
-/*             {
-                "rel": "http://microformats.org/wiki/rel-reply-to",
-                "type": "application/json",
-                "href": ownAddress + "/messages/" + dbSubject.username
-            }, */
+            /*             {
+                            "rel": "http://microformats.org/wiki/rel-reply-to",
+                            "type": "application/json",
+                            "href": ownAddress + "/messages/" + dbSubject.username
+                        }, */
             {
                 "rel": "publickey",
                 "type": "text/plain",
