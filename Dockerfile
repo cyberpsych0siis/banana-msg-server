@@ -16,4 +16,6 @@ COPY . .
 #RUN yarn add sqlite3
 RUN yarn
 
+EXPOSE 8080
+
 CMD ["yarn", "prod"]
