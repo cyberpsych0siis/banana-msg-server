@@ -57,7 +57,7 @@ export function createDataEntry(dbSubject) {
             {
                 "rel": "self",
                 "type": "application/activity+json",
-                "href": ownAddress + "/messages/"
+                "href": ownAddress + "/pub/"
             }/* ,
             {
                 "rel": "http://ostatus.org/schema/1.0/subscribe",

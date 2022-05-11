@@ -5,6 +5,7 @@ import login from "./jwt/login.js";
 import profile from "./profile/index.js";
 // import { DatabaseConnector } from "./connector/DatabaseConnector.js";
 import messages from "./messages/index.js";
+import activitypub from "./activitypub/index.js";
 // import wellknown from './wellknown/index.js';
 
 export default (app, db, debug = false) => {
@@ -14,6 +15,7 @@ export default (app, db, debug = false) => {
     login(route, db);
     // profile(route, db);
     messages(route, db);
+    activitypub(route, db);
 
     //Add routes here that you want to be enabled in development only
     if (process.env.NODE_ENV != "production" || debug) {

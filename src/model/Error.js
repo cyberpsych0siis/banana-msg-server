@@ -1,9 +1,9 @@
 export default class BaseError extends Error {
-    constructor(errormessage) {
+    constructor(errormessage, errorcode = -1) {
         super(errormessage);
         // this.success = false;
         this.errortitle = errormessage;
-        this.errorcode = -1; //GENERAL ERROR
+        this.errorcode = errorcode;
     }
 
     toJSON() {

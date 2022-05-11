@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export default class SuccessMessage {
     constructor(req, res, data) {
         this.data = data;

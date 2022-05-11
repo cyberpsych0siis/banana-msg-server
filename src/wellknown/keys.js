@@ -16,13 +16,11 @@ export default (app, db) => {
                 ":username": username
             });
 
-            console.log(exist.ex);
-
             if (exist.ex) {
                 let key = await queryGetOnce(db, "getPubkey", {
                     ":username": username
                 });
-                console.log(key);
+                // console.log(key);
                 res.status(200).send(key);
             } else {
                 res.status(404).end();
