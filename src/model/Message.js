@@ -1,5 +1,8 @@
 import mysql from 'mysql2';
 
+/**
+ * @deprecated
+ */
 export default class BananaMessage {
     constructor(message, from, to) {
         this.message = message;

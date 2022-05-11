@@ -2,44 +2,13 @@ import express from 'express';
 import { queryGet, queryGetOnce, querySet } from '../connector/database.js';
 import { getJwtConfig } from '../jwt/config.js';
 import BaseError from '../model/Error.js';
-import { getHost } from '../wellknown/finger.js';
 import fetch from 'node-fetch';
 import ActivityPubMessage from '../model/ActivityPubMessage.js';
 
 export default (app, db) => {
     const route = express.Router();
 
-    //activitypub receiver route
-    route.post("/", async (req, res, next) => {
-        const to = new URL(getHost());
-        let u2 = new URL(req.body.actor);
-        const senderAddress = req.body.from.name + "@" + u2.host;
-        const name = req.body.to.name;
 
-
-        console.log("New Message from: " + senderAddress);
-        let check = await queryGetOnce(db, "doesUserExist", {
-            ":username": decodeURIComponent(name)
-        });
-
-        if (check.ex) {
-            const qparams = {
-                ":fromUser": senderAddress,
-                ":toUser": decodeURIComponent(name) + "@" + to.host,
-                ":textBody": encodeURIComponent(req.body.object.content),
-                ":timestamp": Date.now()
-            }
-
-            let dbresponse = await querySet(db, "sendMessageToLocalUserInbox", qparams);
-
-            console.log(qparams);
-            console.log(dbresponse);
-
-            next({})
-        } else {
-            next(new BaseError("User not found"))
-        }
-    });
 
     route.get("/all", getJwtConfig(), async (req, res, next) => {
 
@@ -91,7 +60,7 @@ export default (app, db) => {
 
         const response = await fetch(webfingerRequestURI)
         if (response.status == 404) {
-            next(new BaseError("User not found"))
+            next(new BaseError("User not found", 404))
         } else {
             const jsonData = await response.json();
             // console.log(jsonData);
@@ -108,15 +77,19 @@ export default (app, db) => {
             if (sliced.length == 1) {
                 sliced = sliced[0];
 
-                fetch(sliced.href, {
-                    method: "POST",
-                    body: newMessage,
-                    headers: { 'Content-Type': 'application/json' },
-                }).then((data) => {
-                    next({});
-                })
+                if (process.env.DISABLE_FEDERATION != "true") {
+                    fetch(sliced.href, {
+                        method: "POST",
+                        body: newMessage,
+                        headers: { 'Content-Type': 'application/json' },
+                    }).then((data) => {
+                        next({});
+                    })
+                } else {
+                    next(new BaseError("User not found", 404));
+                }
             } else {
-                next(new BaseError("User not found"))
+                next(new BaseError("User not found", 404))
             }
         }
     });

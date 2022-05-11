@@ -15,6 +15,10 @@ import jwks from 'jwks-rsa';
     }));
 } */
 
+function getJWTSecret() {
+    return process.env.JWT_SECRET ?? "top secret"
+}
+
 export default (app) => {
     app.use(getJwtConfig());
 }
@@ -27,13 +31,13 @@ export function createToken(subject) {
             aud: process.env.JWT_AUDIENCE,
             iss: process.env.JWT_ISSUER
             // username: 
-        }, process.env.JWT_SECRET)
+        }, getJWTSecret())
     };
 }
 
 export function getJwtConfig() {
     return expressjwt({
-        secret: process.env.JWT_SECRET,
+        secret: getJWTSecret(),
         audience: process.env.JWT_AUDIENCE,
         issuer: process.env.JWT_ISSUER,
         algorithms: ["HS256"]
