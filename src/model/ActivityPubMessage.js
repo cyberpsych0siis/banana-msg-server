@@ -1,3 +1,6 @@
+/**
+ * @deprecated 
+ */
 export default class ActivityPubMessage {
 
     constructor(senderName, senderProfileLink, recepientName, recepientProfileLink, body) {

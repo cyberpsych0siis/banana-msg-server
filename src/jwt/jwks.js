@@ -33,7 +33,7 @@ try {
     const keys = generate(PASSPHRASE);
 
     console.log("Certificates have been generated with password '" + PASSPHRASE + "'");
-    console.log("Mount them inside the docker container to /certs/{privkey,pubkey}.pem and set PASSPHRASE env for persistence");
+    console.log("Mount them inside the docker container to /certs/{privkey,pubkey}.pem and set JWT_SECRET env for persistence");
     privateKey = keys.privateKey;
     publicKey = keys.publicKey;
 }

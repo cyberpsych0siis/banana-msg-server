@@ -23,23 +23,29 @@ export default (app, db) => {
 
     route.use(expressjwt({ secret: getSecret, algorithms: ["RS256"] }))
     route.post("/", async (req, res, next) => {
-        try {
-            const to = new URL(getHost());
-            let u2 = new URL(req.body.actor);
-            const senderAddress = req.body.from.name + "@" + u2.host;
-            const name = req.body.to.name;
+        console.log(req.body);
+        const parsedMessage = BananaExternalMessage.fromJson(req.body);
+        addMessageToDatabase(db, parsedMessage, next);
+    });
 
+    if (process.env.DISABLE_FEDERATION != "true") {
 
-            console.log("New Message from: " + senderAddress);
+        app.use("/pub", route);
+    }
+}
+
+export async function addMessageToDatabase(db, message, next) {
+    console.log("New Message from: " + message.senderUsername);
+    console.log("for: " + message.receiverUsername);
             let check = await queryGetOnce(db, "doesUserExist", {
-                ":username": decodeURIComponent(name)
+                ":username": message.receiverUsername
             });
 
             if (check.ex) {
                 const qparams = {
-                    ":fromUser": senderAddress,
-                    ":toUser": decodeURIComponent(name) + "@" + to.host,
-                    ":textBody": encodeURIComponent(req.body.object.content),
+                    ":fromUser": message.from,
+                    ":toUser": message.receiverUsername,
+                    ":textBody": encodeURIComponent(message.body),
                     ":timestamp": Date.now()
                 }
 
@@ -52,16 +58,4 @@ export default (app, db) => {
             } else {
                 next(new BaseError("User not found", 404))
             }
-        } catch (e) {
-            console.error(e);
-            next(e);
-        }
-    });
-
-    if (process.env.DISABLE_FEDERATION != "true") {
-
-        // export const verifyRemoteJwt = expressjwt({ secret: verifyRemoteJwtJWKS, algorithms: ["HS256"] })
-
-        app.use("/pub", route);
-    }
 }

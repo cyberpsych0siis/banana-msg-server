@@ -35,8 +35,8 @@ if (process.env.NODE_ENV == "dev") {
 /* Let App Listen to port */
 if (process.env.USE_SSL == "true") {
     let privateKey, certificate;
-    privateKey = fs.readFileSync(process.env.SSL_KEY_FILE ?? 'ssl/key.pem');
-    certificate = fs.readFileSync(process.env.SSL_CERT_FILE ?? 'ssl/cert.pem');
+    privateKey = fs.readFileSync(process.env.SSL_KEY_FILE ?? 'ssl/default_key.pem');
+    certificate = fs.readFileSync(process.env.SSL_CERT_FILE ?? 'ssl/default_cert.pem');
 
     https.createServer({
         key: privateKey,
