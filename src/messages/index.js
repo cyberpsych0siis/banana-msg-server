@@ -3,7 +3,7 @@ import { queryGet, queryGetOnce, querySet } from '../connector/database.js';
 import { getJwtConfig } from '../jwt/config.js';
 import BaseError from '../model/Error.js';
 import fetch from 'node-fetch';
-import ActivityPubMessage from '../model/ActivityPubMessage.js';
+// import ActivityPubMessage from '../model/ActivityPubMessage.js';
 import BananaExternalMessage from '../model/ExternalMessage.js';
 import { addMessageToDatabase } from '../pub/index.js';
 
@@ -86,7 +86,7 @@ export default (app, db) => {
             } else {
                 //send message to remote server
                 // console.log("send message to remote server");
-                const webfingerRequestURI = 'http://' + destination + `/.well-known/webfinger?resource=${destC}`;
+                const webfingerRequestURI = 'https://' + destination + `/.well-known/webfinger?resource=${destC}`;
                 console.log("[Webfinger] " + webfingerRequestURI);
 
                 const response = await fetch(webfingerRequestURI)
