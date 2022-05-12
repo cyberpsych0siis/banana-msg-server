@@ -20,7 +20,6 @@ export default (app, db) => {
                 let key = await queryGetOnce(db, "getPubkey", {
                     ":username": username
                 });
-                // console.log(key);
                 res.status(200).send(key);
             } else {
                 res.status(404).end();

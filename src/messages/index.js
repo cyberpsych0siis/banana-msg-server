@@ -8,8 +8,6 @@ import ActivityPubMessage from '../model/ActivityPubMessage.js';
 export default (app, db) => {
     const route = express.Router();
 
-
-
     route.get("/all", getJwtConfig(), async (req, res, next) => {
 
         const hostpart = new URL(req.auth.iss).host;
@@ -77,11 +75,16 @@ export default (app, db) => {
             if (sliced.length == 1) {
                 sliced = sliced[0];
 
+                console.log(req.headers.authorization);
+
                 if (process.env.DISABLE_FEDERATION != "true") {
                     fetch(sliced.href, {
                         method: "POST",
                         body: newMessage,
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `${req.headers.authorization}`
+                        },
                     }).then((data) => {
                         next({});
                     })

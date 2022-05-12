@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import jwks from 'jwks-rsa';
+import { getPrivateKey } from './jwks.js';
 
 /* export default (app, config = null) => {
     app.use(expressjwt(config || {
@@ -16,7 +17,13 @@ import jwks from 'jwks-rsa';
 } */
 
 function getJWTSecret() {
-    return process.env.JWT_SECRET ?? "top secret"
+    // return process.env.JWT_SECRET ?? "top secret"
+    return jwks.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: process.env.JWT_ISSUER + "/.well-known/jwks.json"
+    })
 }
 
 export default (app) => {
@@ -24,15 +31,16 @@ export default (app) => {
 }
 
 export function createToken(subject) {
-    return {
-        "token": jwt.sign({
-            algorithm: "HS256",
-            sub: subject,
-            aud: process.env.JWT_AUDIENCE,
-            iss: process.env.JWT_ISSUER
-            // username: 
-        }, getJWTSecret())
-    };
+        const k = {
+            "token": jwt.sign({
+                sub: subject,
+                aud: process.env.JWT_AUDIENCE,
+                iss: process.env.JWT_ISSUER
+            }, { key: getPrivateKey(), passphrase: "top secret"},
+            { algorithm: "RS256" })
+        };
+
+        return k;
 }
 
 export function getJwtConfig() {
@@ -40,6 +48,6 @@ export function getJwtConfig() {
         secret: getJWTSecret(),
         audience: process.env.JWT_AUDIENCE,
         issuer: process.env.JWT_ISSUER,
-        algorithms: ["HS256"]
+        algorithms: ["RS256"]
     })
 }
