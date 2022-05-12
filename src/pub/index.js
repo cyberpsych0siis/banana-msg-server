@@ -4,6 +4,7 @@ import BaseError from '../model/Error.js';
 import { getHost } from '../wellknown/finger.js';
 import { JwksClient } from 'jwks-rsa';
 import { queryGetOnce, querySet } from '../connector/database.js';
+import BananaExternalMessage from '../model/ExternalMessage.js';
 
 export default (app, db) => {
     const route = express.Router();
