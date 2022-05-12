@@ -68,7 +68,7 @@ export default (app, db) => {
 
             const [sendC, destC] = [
                 usernameFrom + "@" + from,
-                usernameDest + "@" + from
+                usernameDest + "@" + destination
             ];
 
             // console.log(usernameFrom, from, usernameDest, destination, sendC, destC);
