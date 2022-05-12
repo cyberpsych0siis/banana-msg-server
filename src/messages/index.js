@@ -8,8 +8,6 @@ import ActivityPubMessage from '../model/ActivityPubMessage.js';
 export default (app, db) => {
     const route = express.Router();
 
-
-
     route.get("/all", getJwtConfig(), async (req, res, next) => {
 
         const hostpart = new URL(req.auth.iss).host;

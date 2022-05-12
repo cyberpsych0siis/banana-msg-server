@@ -1,21 +1,59 @@
 import fs from 'fs';
 import jose from 'node-jose';
-import express from 'express';
+import crypto from 'crypto';
+
+const PASSPHRASE = process.env.JWT_SECRET ?? "top secret";
+
+function generate(passphrase) {
+    let keys = crypto.generateKeyPairSync("rsa", {
+        modulusLength: 4096,
+        publicKeyEncoding: {
+            type: "spki",
+            format: "pem",
+        },
+        privateKeyEncoding: {
+            type: "pkcs8",
+            format: "pem",
+            cipher: "aes-256-cbc",
+            passphrase: passphrase,
+        },
+    });
+
+    // fs.writeFileSync(path + "/privkey.pem", keys.privateKey)
+    // fs.writeFileSync(path + "/pubkey.pem", keys.publicKey)
+
+    return keys;
+}
 
 const keyStore = jose.JWK.createKeyStore();
 let key;
 
-keyStore.generate("RSA", 2048, {
-    alg: "RS256",
-    use: "sig"
-}).then(e => {
-    console.log("[JWKS] JWK generation complete");
-    key = e;
-});
+let privateKey, publicKey;
+try {
+    privateKey = fs.readFileSync("/certs/privkey.pem");
+    publicKey = fs.readFileSync("/certs/pubkey.pem");
+} catch (e) {
+    const keys = generate(PASSPHRASE);
 
-export default (app, db) => {
+    console.log("Certificates have been generated with password '" + PASSPHRASE + "'");
+    console.log("Mount them inside the docker container to /certs/{privkey,pubkey}.pem and set PASSPHRASE env for persistence");
+    privateKey = keys.privateKey;
+    publicKey = keys.publicKey;
+}
+
+export function getPrivateKey() {
+    return privateKey;
+}
+
+export default (app) => {
+
+    jose.JWK.asKey(Buffer.from(publicKey), "pem").
+        then(function (result) {
+            keyStore.add(result);
+        });
+
     app.get("/jwks.json", (req, res, next) => {
-        res.send(key.toJSON());
+        res.send(keyStore.toJSON());
     });
 }
 

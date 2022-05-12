@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import jwks from 'jwks-rsa';
-import { getKID } from './jwks.js';
+import { getPrivateKey } from './jwks.js';
 
 /* export default (app, config = null) => {
     app.use(expressjwt(config || {
@@ -30,32 +30,17 @@ export default (app) => {
     app.use(getJwtConfig());
 }
 
-export async function createToken(subject) {
-    const jwksClient = jwks({
-        jwksUri: process.env.JWT_ISSUER + "/.well-known/jwks.json",
-    });
+export function createToken(subject) {
+        const k = {
+            "token": jwt.sign({
+                sub: subject,
+                aud: process.env.JWT_AUDIENCE,
+                iss: process.env.JWT_ISSUER
+            }, { key: getPrivateKey(), passphrase: "top secret"},
+            { algorithm: "RS256" })
+        };
 
-    // console.log(getJwtConfig());
-
-    try {
-        const key = await jwksClient.getSigningKey(getKID())
-    } catch (e) {
-        console.log(e);
-        // return null;
-    }
-/*     return {
-        "token": jwt.sign({
-            // algorithm: "HS256",
-            algorithm: "RS256",
-            sub: subject,
-            aud: process.env.JWT_AUDIENCE,
-            iss: process.env.JWT_ISSUER
-            // username: 
-        }, getJWTSecret())
-    }; */
-
-    // let jwks_ = await readJWKFromPEM(privateKeyName);
-    // jwks.read
+        return k;
 }
 
 export function getJwtConfig() {
@@ -63,7 +48,6 @@ export function getJwtConfig() {
         secret: getJWTSecret(),
         audience: process.env.JWT_AUDIENCE,
         issuer: process.env.JWT_ISSUER,
-        // algorithms: ["HS256"]
         algorithms: ["RS256"]
     })
 }
