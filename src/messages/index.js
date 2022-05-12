@@ -86,7 +86,7 @@ export default (app, db) => {
             } else {
                 //send message to remote server
                 // console.log("send message to remote server");
-                const webfingerRequestURI = 'https://' + destination + `/.well-known/webfinger?resource=${destC}`;
+                const webfingerRequestURI = 'https://' + destination + `/.well-known/webfinger?resource=acct:${destC}`;
                 console.log("[Webfinger] " + webfingerRequestURI);
 
                 const response = await fetch(webfingerRequestURI)
