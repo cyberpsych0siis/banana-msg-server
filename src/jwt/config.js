@@ -3,19 +3,6 @@ import { expressjwt } from 'express-jwt';
 import jwks from 'jwks-rsa';
 import { getPrivateKey } from './jwks.js';
 
-/* export default (app, config = null) => {
-    app.use(expressjwt(config || {
-        secret: jwks.expressJwtSecret({
-            cache: true,
-            rateLimit: true,
-            jwksRequestsPerMinute: 5,
-            jwksUri: process.env.JWKS_URI
-        }),
-        issuer: process.env.JWT_ISSUER,
-        algorithms: ['RS256']
-    }));
-} */
-
 function getJWTSecret() {
     // return process.env.JWT_SECRET ?? "top secret"
     return jwks.expressJwtSecret({

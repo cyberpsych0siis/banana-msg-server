@@ -52,8 +52,8 @@ export default (app, db) => {
                 next(new BaseError("User not found", 404))
             }
         } catch (e) {
-            // console.error(e);
-            next(new BaseError("The supplied pub activity is not in the correct format", 400));
+            console.error(e);
+            next(e);
         }
     });
 

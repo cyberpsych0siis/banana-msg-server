@@ -2,7 +2,7 @@ import fs from 'fs';
 import jose from 'node-jose';
 import crypto from 'crypto';
 
-const PASSPHRASE = process.env.JWT_SECRET ?? "top secret";
+export const PASSPHRASE = process.env.JWT_SECRET ?? "top secret";
 
 function generate(passphrase) {
     let keys = crypto.generateKeyPairSync("rsa", {
