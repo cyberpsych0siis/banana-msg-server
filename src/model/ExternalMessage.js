@@ -14,8 +14,8 @@ export default class BananaExternalMessage {
 
     static fromObject(obj) {
         console.log(obj);
-        const { from: sender, to: receiver, subject, msg: body } = obj;
-        return new BananaExternalMessage(sender, receiver, subject, body);
+        const { from: sender, to: receiver, subject, body } = obj;
+        return new BananaExternalMessage(sender, receiver, subject, body.msg);
     }
 
     static fromJson(msgJson) {
