@@ -110,7 +110,7 @@ export default (app, db) => {
                         if (process.env.DISABLE_FEDERATION != "true") {
                             fetch(sliced.href, {
                                 method: "POST",
-                                body: externalMessage,
+                                body: externalMessage.toString(),
                                 headers: { 
                                     'Content-Type': 'application/json',
                                     'Authorization': `${req.headers.authorization}`
