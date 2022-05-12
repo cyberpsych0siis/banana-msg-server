@@ -9,7 +9,7 @@ export default class BananaExternalMessage {
         this.senderUsername = "@" + sender.split("@").filter(e => e != '')[0]
         console.log(receiver.split("@"));
         this.receiverUsername = "@" + receiver.split("@").filter(e => e != '')[0]
-        this.body = body.msg;
+        this.body = body;
     }
 
     static fromObject(obj) {
