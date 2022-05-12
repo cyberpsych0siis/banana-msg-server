@@ -19,9 +19,6 @@ function generate(passphrase) {
         },
     });
 
-    // fs.writeFileSync(path + "/privkey.pem", keys.privateKey)
-    // fs.writeFileSync(path + "/pubkey.pem", keys.publicKey)
-
     return keys;
 }
 

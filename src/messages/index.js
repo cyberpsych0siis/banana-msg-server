@@ -75,11 +75,16 @@ export default (app, db) => {
             if (sliced.length == 1) {
                 sliced = sliced[0];
 
+                console.log(req.headers.authorization);
+
                 if (process.env.DISABLE_FEDERATION != "true") {
                     fetch(sliced.href, {
                         method: "POST",
                         body: newMessage,
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `${req.headers.authorization}`
+                        },
                     }).then((data) => {
                         next({});
                     })
