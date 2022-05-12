@@ -24,7 +24,7 @@ export default (app, db) => {
         }
     });
 
-    route.get("/logout", getJwtConfig(), (req, res, next) => {
+    route.get("/logout", (req, res, next) => {
         //invalidate jwt somehow here
 
         next({
