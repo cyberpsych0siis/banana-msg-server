@@ -3,7 +3,6 @@ import { queryGet, queryGetOnce, querySet } from '../connector/database.js';
 import { getJwtConfig } from '../jwt/config.js';
 import BaseError from '../model/Error.js';
 import fetch from 'node-fetch';
-// import ActivityPubMessage from '../model/ActivityPubMessage.js';
 import BananaExternalMessage from '../model/ExternalMessage.js';
 import { addMessageToDatabase } from '../pub/index.js';
 
@@ -11,8 +10,6 @@ export default (app, db) => {
     const route = express.Router();
 
     route.get("/all", getJwtConfig(), async (req, res, next) => {
-
-        const hostpart = new URL(req.auth.iss).host;
 
         let data = await queryGet(db, "allMessagesForUser", {
             ":forUser": req.auth.sub
@@ -42,8 +39,6 @@ export default (app, db) => {
             e.textBody = decodeURIComponent(e.textBody)
             return e;
         })
-
-        console.log(data);
 
         next(data);
     });
@@ -86,7 +81,6 @@ export default (app, db) => {
                 addMessageToDatabase(db, externalMessage, next);
             } else {
                 //send message to remote server
-                // console.log("send message to remote server");
                 const webfingerRequestURI = 'https://' + destination + `/.well-known/webfinger?resource=acct:${destC}`;
                 console.log("[Webfinger] " + webfingerRequestURI);
 
@@ -100,10 +94,6 @@ export default (app, db) => {
                     let sliced = jsonData.links.filter((entry) => {
                         return entry.rel == "self" && entry.type == "application/activity+json"
                     });
-        
-                    // let receiverProfile = jsonData.links.filter((entry) => {
-                    //     return entry.rel == "http://webfinger.net/rel/profile-page" && entry.type == "text/html"
-                    // });
 
                     if (sliced.length == 1) {
                         sliced = sliced[0];

@@ -1,6 +1,6 @@
 {
   "name": "banana-msg",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Backend for banana messenger",
   "main": "src/app.js",
   "author": "cyberpsych0siis",
