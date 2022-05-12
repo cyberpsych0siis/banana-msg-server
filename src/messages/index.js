@@ -75,7 +75,7 @@ export default (app, db) => {
             if (sliced.length == 1) {
                 sliced = sliced[0];
 
-                console.log(req.headers.authorization);
+                // console.log(req.headers.authorization);
 
                 if (process.env.DISABLE_FEDERATION != "true") {
                     fetch(sliced.href, {
