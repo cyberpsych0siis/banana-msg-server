@@ -40,6 +40,7 @@ export default (app, db) => {
         data = data.map((e) => {
             console.log(e);
             e.textBody = decodeURIComponent(e.textBody)
+            return e;
         })
 
         console.log(data);
