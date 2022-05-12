@@ -37,10 +37,10 @@ export default (app, db) => {
             ":forUser": req.auth.sub
         })
         
-        data = data.map((e) => {
-            console.log(e);
-            e.textBody = decodeURIComponent(e.textBody)
-        })
+        // data = data.map((e) => {
+        //     console.log(e);
+        //     e.textBody = decodeURIComponent(e.textBody)
+        // })
 
         console.log(data);
 
