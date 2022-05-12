@@ -18,4 +18,4 @@ RUN yarn
 
 EXPOSE 8080
 
-CMD ["yarn", "prod"]
+CMD ["yarn", "start"]

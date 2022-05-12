@@ -1,11 +1,26 @@
 import express from 'express';
+import { expressjwt } from 'express-jwt';
 import BaseError from '../model/Error.js';
 import { getHost } from '../wellknown/finger.js';
+import { JwksClient } from 'jwks-rsa';
 
 export default (app, db) => {
     const route = express.Router();
 
-    //activitypub receiver route
+    //pub receiver route
+    var getSecret = async function (req, token) {
+        const issuer = token.payload.iss;
+        const client = new JwksClient({
+            jwksUri: issuer + '/.well-known/jwks.json',
+            timeout: 10000 // 10s
+        });
+
+        const signingKey = await client.getSigningKey();
+
+        return signingKey.publicKey;
+    };
+
+    route.use(expressjwt({ secret: getSecret, algorithms: ["RS256"] }))
     route.post("/", async (req, res, next) => {
         try {
             const to = new URL(getHost());
@@ -43,6 +58,9 @@ export default (app, db) => {
     });
 
     if (process.env.DISABLE_FEDERATION != "true") {
+
+        // export const verifyRemoteJwt = expressjwt({ secret: verifyRemoteJwtJWKS, algorithms: ["HS256"] })
+
         app.use("/pub", route);
     }
 }
