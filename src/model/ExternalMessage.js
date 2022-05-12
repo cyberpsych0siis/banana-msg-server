@@ -9,11 +9,12 @@ export default class BananaExternalMessage {
         this.senderUsername = "@" + sender.split("@").filter(e => e != '')[0]
         console.log(receiver.split("@"));
         this.receiverUsername = "@" + receiver.split("@").filter(e => e != '')[0]
-        this.body = body;
+        this.body = body.msg;
     }
 
     static fromObject(obj) {
-        const { sender, receiver, subject, body } = obj;
+        console.log(obj);
+        const { from: sender, to: receiver, subject, msg: body } = obj;
         return new BananaExternalMessage(sender, receiver, subject, body);
     }
 
