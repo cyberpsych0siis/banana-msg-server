@@ -25,7 +25,7 @@ export default (app, db) => {
     route.use(expressjwt({ secret: getSecret, algorithms: ["RS256"] }))
     route.post("/", async (req, res, next) => {
         console.log(req.body);
-        const parsedMessage = BananaExternalMessage.fromJson(req.body);
+        const parsedMessage = BananaExternalMessage.fromObject(req.body);
         addMessageToDatabase(db, parsedMessage, next);
     });
 

@@ -12,10 +12,13 @@ export default class BananaExternalMessage {
         this.body = body;
     }
 
-    static fromJson(msgJson) {
-        const { sender, receiver, subject, body } = JSON.parse(msgJson);
-
+    static fromObject(obj) {
+        const { sender, receiver, subject, body } = obj;
         return new BananaExternalMessage(sender, receiver, subject, body);
+    }
+
+    static fromJson(msgJson) {
+        return BananaExternalMessage.fromObject(JSON.parse(msgJson));
     }
 
     toJSON() {
