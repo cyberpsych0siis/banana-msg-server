@@ -33,7 +33,18 @@ try {
     const keys = generate(PASSPHRASE);
 
     console.log("Certificates have been generated with password '" + PASSPHRASE + "'");
-    console.log("Mount them inside the docker container to /certs/{privkey,pubkey}.pem and set JWT_SECRET env for persistence");
+
+    try {
+
+        fs.writeFileSync("/certs/privkey.pem", keys.privateKey)
+        fs.writeFileSync("/certs/pubkey.pem", keys.publicKey)
+        console.log("Saved them to /certs");
+        console.log("Mount them inside the docker container to /certs/{privkey,pubkey}.pem and set JWT_SECRET env for persistence");
+    } catch (e) {
+        // console.error(e);
+        console.error("Can't write keys", e.message);
+    }   
+
     privateKey = keys.privateKey;
     publicKey = keys.publicKey;
 }
