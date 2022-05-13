@@ -6,6 +6,7 @@ import profile from "./profile/index.js";
 // import { DatabaseConnector } from "./connector/DatabaseConnector.js";
 import messages from "./messages/index.js";
 import pub from "./pub/index.js";
+
 // import wellknown from './wellknown/index.js';
 
 export default (app, db, debug = false) => {
@@ -39,6 +40,8 @@ export default (app, db, debug = false) => {
         let successData = null;
         let errorData = null;
 
+        res.setHeader("Content-Type", "application/json");
+
         if (!success) {
             console.error(response)
             res.status(response.status ?? 500);
@@ -48,11 +51,15 @@ export default (app, db, debug = false) => {
             successData = response;
         }
 
-        res.send(JSON.stringify({
+        const finalData = JSON.stringify({
             success: success,
             successData: successData,
             errorData: errorData
-        }));
+        });
+
+        console.log(finalData);
+
+        res.send(finalData);
     });
 }
 

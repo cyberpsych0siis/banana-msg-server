@@ -1,7 +1,6 @@
 import express from 'express';
 import { expressjwt } from 'express-jwt';
 import BaseError from '../model/Error.js';
-import { getHost } from '../wellknown/finger.js';
 import { JwksClient } from 'jwks-rsa';
 import { queryGetOnce, querySet } from '../connector/database.js';
 import BananaExternalMessage from '../model/ExternalMessage.js';
@@ -30,7 +29,6 @@ export default (app, db) => {
     });
 
     if (process.env.DISABLE_FEDERATION != "true") {
-
         app.use("/pub", route);
     }
 }

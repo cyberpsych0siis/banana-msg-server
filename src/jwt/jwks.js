@@ -53,7 +53,3 @@ export default (app) => {
         res.send(keyStore.toJSON());
     });
 }
-
-export function getKID() {
-    return key;
-}

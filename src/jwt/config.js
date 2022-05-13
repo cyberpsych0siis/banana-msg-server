@@ -4,7 +4,6 @@ import jwks from 'jwks-rsa';
 import { getPrivateKey } from './jwks.js';
 
 function getJWTSecret() {
-    // return process.env.JWT_SECRET ?? "top secret"
     return jwks.expressJwtSecret({
         cache: true,
         rateLimit: true,

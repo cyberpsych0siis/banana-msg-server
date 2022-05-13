@@ -28,7 +28,6 @@ export default (app, db) => {
         let data = await queryGet(db, "selectMessagesForUser", {
             ":forUser": req.auth.sub
         });
-
         
         await querySet(db, "setChecked", {
             ":forUser": req.auth.sub
@@ -66,8 +65,6 @@ export default (app, db) => {
                 usernameFrom + "@" + from,
                 usernameDest + "@" + destination
             ];
-
-            // console.log(usernameFrom, from, usernameDest, destination, sendC, destC);
 
             const externalMessage = new BananaExternalMessage(sendC, destC, "not supported yet", req.body);
 
