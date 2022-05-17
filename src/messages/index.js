@@ -1,5 +1,5 @@
 import express from 'express';
-import { queryGet, queryGetOnce, querySet } from '../connector/database.js';
+import { queryGet, querySet } from '../connector/database.js';
 import { getJwtConfig } from '../jwt/config.js';
 import BaseError from '../model/Error.js';
 import BananaExternalMessage from '../model/ExternalMessage.js';
@@ -10,19 +10,6 @@ import { sendExternalMessage } from '../lib/federation.js';
 export default (app, db) => {
     const route = express.Router();
 
-/*     route.get("/all", getJwtConfig(), async (req, res, next) => {
-
-        let data = await queryGet(db, "allMessagesForUser", {
-            ":forUser": req.auth.sub
-        });
-
-        await querySet(db, "setChecked", {
-            ":forUser": req.auth.sub
-        });
-
-        next(data);
-    }) */
-
     //sends back the current inbox for user req.auth.sub
     route.get("/inbox", getJwtConfig(), async (req, res, next) => {
         let data = await queryGet(db, "getMessagesForUser", {
@@ -32,7 +19,7 @@ export default (app, db) => {
         data = data.map((e) => {
             // console.log(e);
             e.textBody = decodeURIComponent(e.textBody)
-            
+
             querySet(db, "setChecked", {
                 ":messageId": e.messageId
             });
@@ -43,21 +30,79 @@ export default (app, db) => {
         next(data);
     });
 
-    //Represents the sending endpoint
-    route.post("/send", getJwtConfig(), (req, res, next) => {
+    route.post("/:conversationId", getJwtConfig(), async (req, res, next) => {
+        const senderUri = req.auth.sub + "@" + (new URL(req.auth.iss)).host;
+        const { body } = req.body;
+
+        if (process.env.DISABLE_FEDERATION == "true") {
+
+        } else {
+            console.log(req.params.conversationId);
+
+            let usersInConversation = await queryGet(db, "getUserIdsInConversation", {
+                ":conversationId": req.params.conversationId
+            })
+            
+            usersInConversation = usersInConversation.map(e => {
+                return e.userUri
+            });
+            console.log(usersInConversation);
+
+            const externalMessage = new BananaExternalMessage(senderUri, req.params.conversationId, body, usersInConversation)
+            sendExternalMessage(req.headers.authorization, externalMessage, next);
+        }
+    });
+
+    /**
+     *
+     * {
+        "conversationId": null,
+        "recipients": ["@root@localhost:8080, ..."],
+        "body": "Hello man"
+    }
+     */
+    route.post("/", getJwtConfig(), (req, res, next) => {
+        const senderUri = req.auth.sub + "@" + (new URL(req.auth.iss)).host;
+        const { body } = req.body;
+
+        const externalMessage = new BananaExternalMessage(senderUri, null, body, req.body.recipients);
+        if (process.env.DISABLE_FEDERATION == "true") {
+            if (new URL(req.auth.iss).host != destination) {
+                next(new BaseError("Can't send message to " + destination + "; Federation is disabled on this server"))
+                return;
+            } else {
+                console.log("push message straight to local database (because federation is off)");
+
+                addMessageToConversation(db, externalMessage, next);
+            }
+        } else {
+            //check if sender is in recipients, if not simply add him
+
+            // console.log(d);
+            if (externalMessage.recipients.indexOf(senderUri) == -1) {
+                externalMessage.recipients.push(senderUri);
+            }
+
+            sendExternalMessage(req.headers.authorization, externalMessage, next);
+        }
+    });
+    
+    //create a new conversation
+    route.post("/old", getJwtConfig(), (req, res, next) => {
         //Who sends the message
         // const from = req.auth.sub;
 
         //Who can you trust that this message isn't forged
         const issuer = req.auth.iss;
+        const senderUri = req.auth.sub + "@" + (new URL(issuer)).host;
 
         // console.log(req.body);
 
         // const destAddressIsValid = req.params.user.split("@").length == 2;
 
-        // if (true) {
-            // const externalMessage = new BananaExternalMessage(sendC, "not supported yet", req.body);
-            const externalMessage = BananaExternalMessage.createFromRequest(req);
+        // const externalMessage = new BananaExternalMessage(sendC, "not supported yet", req.body);
+        const externalMessage = BananaExternalMessage.createFromRequest(req);
+        if (req.body.body) {
 
             if (process.env.DISABLE_FEDERATION == "true") {
                 if (new URL(issuer).host != destination) {
@@ -66,12 +111,11 @@ export default (app, db) => {
                 } else {
                     console.log("push message straight to local database (because federation is off)");
 
-                    // addMessageToDatabase(db, externalMessage, next);
                     addMessageToConversation(db, externalMessage, next);
                 }
             } else {
                 //check if sender is in recipients, if not simply add him
-                const d = req.auth.sub + "@" + (new URL(issuer)).host;
+
                 // console.log(d);
                 if (externalMessage.recipients.indexOf(d) == -1) {
                     externalMessage.recipients.push(d);
@@ -79,7 +123,9 @@ export default (app, db) => {
 
                 sendExternalMessage(req.headers.authorization, externalMessage, next);
             }
-        // }
+        } else {
+            next(new BaseError("Message didn't contain property body"))
+        }
     });
 
     app.use("/messages", route);

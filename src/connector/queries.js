@@ -9,10 +9,11 @@ export default {
     "getPubkey": "SELECT publickey FROM users WHERE username = :username",
 
     "sendMessageToLocalUserInbox": "INSERT INTO messages (fromUser,  toUser, textBody, status, timestamp) VALUES (:fromUser, :toUser, :textBody, 1, :timestamp)",
-    "addMessageToLocalConvo": "INSERT INTO messages(conversationId, fromUser, textBody, timestamp) VALUES (:conversationId, :fromUser, :textBody, :timestamp)",
+    "addMessageToLocalConvo": "INSERT INTO messages(conversationId, fromUser, textBody, timestamp, status) VALUES (:conversationId, :fromUser, :textBody, :timestamp, 1)",
     "createNewLocalConvo": "INSERT INTO conversations (startedBy) VALUES(:startedBy)",
     "addUserToLocalConvo": "INSERT INTO users_in_conversation(conversationId, userUri) VALUES(:conversationId, :userUri)",
     "doesConvoExist": "SELECT EXISTS(SELECT * FROM conversations WHERE conversations.conversationId = :conversationId) as ex",
     "doesUserParticipateInConversation": "SELECT EXISTS(SELECT * FROM users_in_conversation WHERE conversationId = :convId AND userUri = :userUri) as ex",
+    "getUserIdsInConversation": "SELECT userUri FROM users_in_conversation WHERE conversationId = :conversationId",
     "getMessagesForUser": "SELECT messages.conversationId, messages.messageId, messages.fromUser, messages.textBody, messages.timestamp, messages.attachmentId, messages.status FROM messages WHERE messages.conversationId IN (SELECT users_in_conversation.conversationId FROM users_in_conversation WHERE userUri = :userUri) AND messages.status = 1 ORDER BY timestamp DESC"
 }

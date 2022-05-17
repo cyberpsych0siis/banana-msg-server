@@ -5,6 +5,9 @@ import { JwksClient } from 'jwks-rsa';
 import { queryGetOnce, querySet } from '../connector/database.js';
 import BananaExternalMessage from '../model/ExternalMessage.js';
 
+/**
+ * This Route manages the global inbox for the server
+ */
 export default (app, db) => {
     const route = express.Router();
 
@@ -50,19 +53,21 @@ export async function addMessageToConversation(db, message, next) {
     if (conversationExists.ex) {
         if (doesUserParticipateInConversation.ex) {
 
+            
             const msg = await querySet(db, "addMessageToLocalConvo", {
                 ":conversationId": message.conversationId,
                 ":fromUser": message.from,
                 ":textBody": message.body,
                 ":timestamp": Date.now()
             });
-
+            
             // console.log(msg);
             next({});
         } else {
             next(new BaseError("Cannot send message - you are not a member of the conversation"));
         }
     } else {
+        console.log("Conversation doesnt exist");
         //create new conversation
         // console.log(message)
         const convo = await querySet(db, "createNewLocalConvo", {

@@ -5,6 +5,8 @@
 - /messages
   - /inbox      GET
   - /send       POST
+  - /conversation/
+  - /:id        POST
 - /pub
   - /           POST
 - /crash        GET

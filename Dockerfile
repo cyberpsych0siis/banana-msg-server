@@ -16,6 +16,8 @@ COPY . .
 #RUN yarn add sqlite3
 RUN yarn
 
+#generate jwt tokens here?
+
 EXPOSE 8080
 
-CMD ["yarn", "prod"]
+CMD ["yarn", "start"]
