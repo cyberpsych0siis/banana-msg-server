@@ -1,0 +1,14 @@
+/
+- /login        POST
+- /logout       GET
+- /register     POST
+- /messages
+  - /inbox      GET
+  - /send       POST
+- /pub
+  - /           POST
+- /crash        GET
+- /nocrash      GET
+- /.well-known  GET
+  - /webfinger  GET
+  - /jwks.json  GET
