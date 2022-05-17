@@ -25,7 +25,7 @@ export default (app, db) => {
     });
 
     route.get("/logout", (req, res, next) => {
-        //invalidate jwt somehow here
+        //TODO invalidate jwt somehow here - coming someday, hopefully...
 
         next({
             token: ""

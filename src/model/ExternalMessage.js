@@ -1,21 +1,35 @@
 export default class BananaExternalMessage {
 
-    type = "message";
-
-    constructor(sender, receiver, subject, body) {
+    constructor(sender, convoId, msg, recipients) {
         this.from = sender;
-        this.to = receiver;
-        this.subject = subject;
-        this.senderUsername = "@" + sender.split("@").filter(e => e != '')[0]
-        console.log(receiver.split("@"));
-        this.receiverUsername = "@" + receiver.split("@").filter(e => e != '')[0]
-        this.body = body;
+        this.conversationId = convoId;
+        this.body = msg;
+        this.recipients = recipients;
+    }
+
+    getWebfingerAddresses() {
+        // console.log(this.recipients);
+        return this.recipients.map(f => {
+            const split = f.split("@").filter(Boolean);
+            // console.log(split);
+
+            const proto = process.env.USE_SSL != "false" ? "https" : "http";
+            return proto + '://' + split[1] + `/.well-known/webfinger?resource=acct:${f}`;
+        });
     }
 
     static fromObject(obj) {
-        console.log(obj);
+        // console.log(obj);
         const { from: sender, to: receiver, subject, body } = obj;
         return new BananaExternalMessage(sender, receiver, subject, body.msg);
+    }
+
+    static createFromRequest(obj) {
+        const [usernameFrom, from] = [obj.auth.sub, new URL(obj.auth.aud).host]
+        const sender = usernameFrom + "@" + from;
+        const { conversationId, body, recipients } = obj.body;
+
+        return new BananaExternalMessage(sender, conversationId, body, recipients);
     }
 
     static fromJson(msgJson) {
@@ -24,10 +38,10 @@ export default class BananaExternalMessage {
 
     toJSON() {
         return {
+            "conversationId": this.conversationId,
             "from": this.from,
-            "to": this.to,
-            "subject": this.subject,
-            "body": this.body
-        };
+            "body": this.body,
+            "recipients": this.recipients
+        }
     }
 }

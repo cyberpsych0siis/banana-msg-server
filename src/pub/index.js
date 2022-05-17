@@ -21,11 +21,12 @@ export default (app, db) => {
         return signingKey.publicKey;
     };
 
-    route.use(expressjwt({ secret: getSecret, algorithms: ["RS256"] }))
+    route.use(expressjwt({ secret: getSecret, algorithms: ["RS256"] }));
+
     route.post("/", async (req, res, next) => {
-        console.log(req.body);
-        const parsedMessage = BananaExternalMessage.fromObject(req.body);
-        addMessageToDatabase(db, parsedMessage, next);
+        // console.log(req.body);
+        const parsedMessage = BananaExternalMessage.createFromRequest(req);
+        addMessageToConversation(db, parsedMessage, next);
     });
 
     if (process.env.DISABLE_FEDERATION != "true") {
@@ -33,28 +34,60 @@ export default (app, db) => {
     }
 }
 
-export async function addMessageToDatabase(db, message, next) {
-    console.log("New Message from: " + message.senderUsername);
-    console.log("for: " + message.receiverUsername);
-            let check = await queryGetOnce(db, "doesUserExist", {
-                ":username": message.receiverUsername
+export async function addMessageToConversation(db, message, next) {
+    console.log("New Message from: " + message.from);
+    // console.log(message);
+
+    const conversationExists = await queryGetOnce(db, "doesConvoExist", {
+        ":conversationId": message.conversationId
+    });
+
+    const doesUserParticipateInConversation = await queryGetOnce(db, "doesUserParticipateInConversation", {
+        ":convId": message.conversationId,
+        ":userUri": message.from
+    })
+
+    if (conversationExists.ex) {
+        if (doesUserParticipateInConversation.ex) {
+
+            const msg = await querySet(db, "addMessageToLocalConvo", {
+                ":conversationId": message.conversationId,
+                ":fromUser": message.from,
+                ":textBody": message.body,
+                ":timestamp": Date.now()
             });
 
-            if (check.ex) {
-                const qparams = {
-                    ":fromUser": message.from,
-                    ":toUser": message.receiverUsername,
-                    ":textBody": encodeURIComponent(message.body),
-                    ":timestamp": Date.now()
-                }
+            // console.log(msg);
+            next({});
+        } else {
+            next(new BaseError("Cannot send message - you are not a member of the conversation"));
+        }
+    } else {
+        //create new conversation
+        // console.log(message)
+        const convo = await querySet(db, "createNewLocalConvo", {
+            ":startedBy": message.from
+        });
 
-                let dbresponse = await querySet(db, "sendMessageToLocalUserInbox", qparams);
+        message.recipients.map(async e => {
+            await querySet(db, "addUserToLocalConvo", {
+                ":conversationId": convo.lastID,
+                ":userUri": e
+            });
+        });
 
-                console.log(qparams);
-                console.log(dbresponse);
+        //add new message to created convo:
+        const newMsg = await querySet(db, "addMessageToLocalConvo", {
+            ":conversationId": convo.lastID,
+            ":fromUser": message.from,
+            ":textBody": message.body,
+            ":timestamp": Date.now()
+        });
 
-                next({})
-            } else {
-                next(new BaseError("User not found", 404))
-            }
+        console.log(newMsg);
+
+        //TODO send push notification here
+
+        next({})
+    }
 }

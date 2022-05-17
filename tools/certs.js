@@ -18,11 +18,15 @@ export function generate(passphrase, path) {
         },
     });
 
-    fs.writeFileSync(path + "/privkey.pem", keys.privateKey)
-    fs.writeFileSync(path + "/pubkey.pem", keys.publicKey)
+    // fs.writeFileSync(path + "/privkey.pem", keys.privateKey)
+    console.log(keys.privateKey);
+    // fs.writeFileSync(path + "/pubkey.pem", keys.publicKey)
+    console.log(keys.publicKey);
 
     return keys;
 }
+
+generate("top secret");
 
 /* module.exports.save = function() {
     console.log(__dirname);

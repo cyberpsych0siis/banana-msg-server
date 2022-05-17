@@ -8,7 +8,9 @@ import { open } from 'sqlite'
 import wellknown from './wellknown/index.js';
 import https from 'https';
 
-dotenv.config();
+dotenv.config({
+    path: process.cwd()
+});
 
 const app = express();
 const port = process.env.PORT || 8080;
